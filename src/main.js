@@ -4,9 +4,10 @@ import {Quasar} from "quasar";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import router from "./router";
 import i18n from "./i18n";
+import "@quasar/extras/material-icons/material-icons.css";
+
 import "@quasar/extras/roboto-font/roboto-font.css";
 // Import Quasar css
-import "@quasar/extras/material-icons/material-icons.css";
 import "quasar/src/css/index.sass";
 import "./style.css";
 

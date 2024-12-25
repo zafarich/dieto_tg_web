@@ -8,6 +8,7 @@ import BaseInput from "@/components/base/BaseInput.vue";
 const store = useOnboardingStore();
 const router = useRouter();
 const birthday = ref("");
+const birth_modal = ref(false);
 
 const formRef = ref(null);
 
@@ -61,12 +62,14 @@ function resetValidation(timeout = 0) {
         <template #append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy
+              v-model="birth_modal"
               cover
               transition-show="scale"
               transition-hide="scale"
             >
               <q-date
                 v-model="birthday"
+                @update:model-value="birth_modal = false"
                 mask="DD.MM.YYYY"
                 :options="(date) => new Date(date) <= new Date()"
               />

@@ -7,12 +7,12 @@ import BaseInput from "@/components/base/BaseInput.vue";
 
 const store = useOnboardingStore();
 const router = useRouter();
-const weight = ref(0);
+const height = ref(0);
 
 const formRef = ref(null);
 
 onMounted(() => {
-  weight.value = store.userInfo.weight || "";
+  height.value = store.userInfo.height || "";
   resetValidation();
 });
 
@@ -20,11 +20,8 @@ async function submit() {
   resetValidation();
   const hasError = !(await formRef.value.validate());
   if (hasError) return resetValidation(3000);
-
-  store.setWeight(weight.value);
+  store.setHeight(height.value);
   store.nextStep();
-  // store.completeOnboarding();
-  // router.push({name: "home"});
 }
 
 const goBack = () => {
@@ -43,22 +40,22 @@ function resetValidation(timeout = 0) {
 <template>
   <div class="step-container">
     <h2 class="text-lg font-medium mb-6">
-      {{ $t("Your_weight") }}
+      {{ $t("Your_height") }}
     </h2>
 
     <q-form @submit.prevent="submit" ref="formRef" autofocus>
       <BaseInput
-        v-model="weight"
+        v-model="height"
         type="number"
         outlined
-        :suffix="$t('kg')"
+        :suffix="$t('sm')"
         class="mb-4 full-width"
-        :placeholder="$t('Weight')"
+        :placeholder="$t('Height')"
         :rules="[
           (v) => validate.required(v),
           (v) => validate.number(v),
-          (v) => validate.min_weight(v, 35),
-          (v) => validate.max_weight(v, 200),
+          (v) => validate.min_height(v, 50),
+          (v) => validate.max_height(v, 250),
         ]"
         @keyup.enter="submit"
       />

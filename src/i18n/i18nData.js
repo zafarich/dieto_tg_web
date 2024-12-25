@@ -16,11 +16,27 @@ export default {
       "min_string": "Minimal {n} ta",
       "min_age": "Foydalanish uchun minimal yosh: {n}",
       "min_weight": "Minimal og'irlik: {n} kg",
-      "max_weight": "Maksimal og'irlik: {n} kg"
+      "max_weight": "Maksimal og'irlik: {n} kg",
+      "min_height": "Minimal bo'y: {n} sm",
+      "max_height": "Maksimal bo'y: {n} sm"
     },
     "Birth_date": "Tug'ilgan kuningiz",
     "Your_weight": "Sizning vazningiz?",
-    "Weight": "Vazn"
+    "Weight": "Vazn",
+    "kg": "kg",
+    "sm": "sm",
+    "Your_height": "Bo'yingiz uzunligi?",
+    "Height": "Bo'y",
+    "title_sedentary": "Sakkiz soatlik o'tirgan turmush tarzi",
+    "title_light": "Yengil jismoniy faoliyat",
+    "title_moderate": "O'rtacha jismoniy faoliyat",
+    "title_high": "Yuqori jismoniy faoliyat",
+    "title_very_high": "Juda yuqori jismoniy faoliyat",
+    "desc_sedentary": "Juda kam jismoniy mashqlar. Ofis yoki uy sharoitidagi faoliyat uchun mos.",
+    "desc_light": "1-3 marta engil mashqlar haftasiga. Kamharakat turmush tarzi uchun mos.",
+    "desc_moderate": "3-5 marta o'rtacha mashqlar haftasiga. O'rtacha faoliyat uchun mos.",
+    "desc_high": "6-7 marta intensiv mashqlar haftasiga. Faol turmush tarzi uchun mos.",
+    "desc_very_high": "Har kuni intensiv mashqlar. Juda faol turmush tarzi uchun mos."
   },
   "ru": {
     "hello": "Zdras",
@@ -39,10 +55,26 @@ export default {
       "min_string": "rules.min_string",
       "min_age": "rules.min_age",
       "min_weight": "rules.min_weight",
-      "max_weight": "rules.max_weight"
+      "max_weight": "rules.max_weight",
+      "min_height": "rules.min_height",
+      "max_height": "rules.max_height"
     },
     "Birth_date": "Birth_date",
     "Your_weight": "Your_weight",
-    "Weight": "Weight"
+    "Weight": "Weight",
+    "kg": "кг",
+    "sm": "см",
+    "Your_height": "Your_height",
+    "Height": "Height",
+    "title_sedentary": "Сидячий образ жизни",
+    "title_light": "Лёгкая активность",
+    "title_moderate": "Умеренная активность",
+    "title_high": "Высокая активность",
+    "title_very_high": "Очень высокая активность",
+    "desc_sedentary": "Очень мало физических упражнений. Подходит для расчета калорий для сидячей работы.",
+    "desc_light": "Легкие упражнения 1-3 раза в неделю. Подходит для расчета калорий для малоподвижного образа жизни.",
+    "desc_moderate": "Умеренные упражнения 3-5 раз в неделю. Подходит для расчета калорий для умеренной активности.",
+    "desc_high": "Интенсивные упражнения 6-7 раз в неделю. Подходит для расчета калорий для активного образа жизни.",
+    "desc_very_high": "Ежедневные интенсивные тренировки. Подходит для расчета калорий для очень активного образа жизни."
   }
 };

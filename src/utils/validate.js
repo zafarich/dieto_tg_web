@@ -31,8 +31,15 @@ export default {
   max100: (v) => Number(trimBetween(v)) <= 100 || t("rules.max", {n: 100}),
   date: (v) => (v ? regExp.date.test(v) || t("rules.date") : true),
   min_age: (v, n) => {
-    const age = new Date().getFullYear() - new Date(v).getFullYear();
-    return age >= n || t("rules.min_age", {n});
+    const [day, month, year] = v.split(".");
+    const age = new Date().getFullYear() - Number(year);
+    const monthDiff = new Date().getMonth() + 1 - Number(month);
+    const dayDiff = new Date().getDate() - Number(day);
+    return (
+      age > n ||
+      (age === n && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0))) ||
+      t("rules.min_age", {n})
+    );
   },
   max_age: (v, n) => {
     const age = new Date().getFullYear() - new Date(v).getFullYear();
@@ -42,7 +49,10 @@ export default {
     Number(trimBetween(v)) >= n || t("rules.min_weight", {n}),
   max_weight: (v, n) =>
     Number(trimBetween(v)) <= n || t("rules.max_weight", {n}),
-
+  min_height: (v, n) =>
+    Number(trimBetween(v)) >= n || t("rules.min_height", {n}),
+  max_height: (v, n) =>
+    Number(trimBetween(v)) <= n || t("rules.max_height", {n}),
   time: (v) => regExp.time.test(v),
   string: (v) => regExp.string.test(v) || t("rules.string"),
   fulltime: (v) => regExp.fulltime.test(v),

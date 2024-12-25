@@ -8,6 +8,8 @@ export const useOnboardingStore = defineStore("onboarding", {
       fullName: "",
       birthday: "",
       weight: null,
+      height: null,
+      activity: null,
     },
     isCompleted: false,
   }),
@@ -25,6 +27,12 @@ export const useOnboardingStore = defineStore("onboarding", {
     setWeight(weight) {
       this.userInfo.weight = weight;
     },
+    setHeight(height) {
+      this.userInfo.height = height;
+    },
+    setActivity(activity) {
+      this.userInfo.activity = activity;
+    },
     nextStep() {
       this.currentStep++;
     },
@@ -34,6 +42,8 @@ export const useOnboardingStore = defineStore("onboarding", {
         fullName: "",
         birthday: "",
         weight: null,
+        height: null,
+        activity: null,
       };
       this.currentStep = 1;
     },

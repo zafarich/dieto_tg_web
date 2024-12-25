@@ -18,7 +18,7 @@ const goBack = () => {
     <h2 class="text-lg font-medium mb-6">
       {{ $t("Select_gender") }}
     </h2>
-    <div class="flex flex-col gap-4 mb-4">
+    <div class="flex flex-col gap-4 mb-4 w-full">
       <q-btn
         class="full-width"
         color="primary"
@@ -36,6 +36,6 @@ const goBack = () => {
         outline
       />
     </div>
-    <q-btn flat class="q-mt-4" no-caps :label="$t('Back')" @click="goBack" />
+    <q-btn class="q-mt-4" flat no-caps :label="$t('Back')" @click="goBack" />
   </div>
 </template>
