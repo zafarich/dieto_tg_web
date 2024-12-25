@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "i18n:build": "google-spreadsheet-vue-i18n --spreadsheet=1fGqFQOkNxSqAZ1tBZdhgKMRTsskbUs-SkAJr37rDaFc --sheet=bot_web --format=js --output=src/i18n/i18nData.js"
   },
@@ -30,7 +30,6 @@
     "sass-embedded": "^1.83.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
-    "vite": "^5.4.8",
-    "vue-tsc": "^2.1.6"
+    "vite": "^5.4.8"
   }
 }
