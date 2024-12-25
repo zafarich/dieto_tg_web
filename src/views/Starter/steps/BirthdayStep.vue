@@ -49,7 +49,6 @@ function resetValidation(timeout = 0) {
         v-model="birthday"
         outlined
         mask="##.##.####"
-        type="number"
         append
         :placeholder="'DD.MM.YYYY'"
         class="mb-4 full-width"
