@@ -9,6 +9,8 @@ import BirthdayStep from "./steps/BirthdayStep.vue";
 import WeightStep from "./steps/WeightStep.vue";
 import HeightStep from "./steps/HeightStep.vue";
 import ActivityStep from "./steps/ActivityStep.vue";
+import GoalWeightStep from "./steps/GoalWeightStep.vue";
+import ResultsStep from "./steps/ResultsStep.vue";
 
 const store = useOnboardingStore();
 
@@ -30,6 +32,10 @@ const currentComponent = computed(() => {
       return HeightStep;
     case 8:
       return ActivityStep;
+    case 9:
+      return GoalWeightStep;
+    case 10:
+      return ResultsStep;
     default:
       return LanguageStep;
   }

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.vue"],
+  "exclude": ["node_modules", "dist"]
+}

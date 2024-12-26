@@ -10,6 +10,7 @@ export const useOnboardingStore = defineStore("onboarding", {
       weight: null,
       height: null,
       activity: null,
+      goal_weight: null,
     },
     isCompleted: false,
   }),
@@ -33,6 +34,9 @@ export const useOnboardingStore = defineStore("onboarding", {
     setActivity(activity) {
       this.userInfo.activity = activity;
     },
+    setGoalWeight(weight) {
+      this.userInfo.goal_weight = weight;
+    },
     nextStep() {
       this.currentStep++;
     },
@@ -44,6 +48,7 @@ export const useOnboardingStore = defineStore("onboarding", {
         weight: null,
         height: null,
         activity: null,
+        goal_weight: null,
       };
       this.currentStep = 1;
     },

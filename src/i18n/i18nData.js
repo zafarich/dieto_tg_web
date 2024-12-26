@@ -36,7 +36,16 @@ export default {
     "desc_light": "1-3 marta engil mashqlar haftasiga. Kamharakat turmush tarzi uchun mos.",
     "desc_moderate": "3-5 marta o'rtacha mashqlar haftasiga. O'rtacha faoliyat uchun mos.",
     "desc_high": "6-7 marta intensiv mashqlar haftasiga. Faol turmush tarzi uchun mos.",
-    "desc_very_high": "Har kuni intensiv mashqlar. Juda faol turmush tarzi uchun mos."
+    "desc_very_high": "Har kuni intensiv mashqlar. Juda faol turmush tarzi uchun mos.",
+    "Your_activity": "Sizning aktivligingiz",
+    "Your_goal_weight": "Sizning maqsadingiz qancha kg?",
+    "Goal_Weight": "Maqsad (kg)",
+    "Results_based_on_answers": "Javoblaringizga asoslangan javoblar",
+    "Body_mass_index\n": "Tana massa indeksi (TMI)",
+    "Weight_degree_1": "Kam vaznlik",
+    "Weight_degree_2": "Normal vazn",
+    "Weight_degree_3": "Ortiqcha vazn",
+    "Weight_degree_4": "Semizlik (ortiqcha yog')"
   },
   "ru": {
     "hello": "Zdras",
@@ -75,6 +84,15 @@ export default {
     "desc_light": "Легкие упражнения 1-3 раза в неделю. Подходит для расчета калорий для малоподвижного образа жизни.",
     "desc_moderate": "Умеренные упражнения 3-5 раз в неделю. Подходит для расчета калорий для умеренной активности.",
     "desc_high": "Интенсивные упражнения 6-7 раз в неделю. Подходит для расчета калорий для активного образа жизни.",
-    "desc_very_high": "Ежедневные интенсивные тренировки. Подходит для расчета калорий для очень активного образа жизни."
+    "desc_very_high": "Ежедневные интенсивные тренировки. Подходит для расчета калорий для очень активного образа жизни.",
+    "Your_activity": "Ваша активность",
+    "Your_goal_weight": "Your_goal_weight",
+    "Goal_Weight": "Goal_Weight",
+    "Results_based_on_answers": "Результаты на основе ваших ответов",
+    "Body_mass_index\n": "Индекс массы тела (ИМТ)",
+    "Weight_degree_1": "Недостаточная масса тела",
+    "Weight_degree_2": "Нормальная масса тела",
+    "Weight_degree_3": "Избыточная масса тела (предожирение)",
+    "Weight_degree_4": "Ожирение"
   }
 };
