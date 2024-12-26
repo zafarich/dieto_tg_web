@@ -40,12 +40,19 @@ export default {
     "Your_activity": "Sizning aktivligingiz",
     "Your_goal_weight": "Sizning maqsadingiz qancha kg?",
     "Goal_Weight": "Maqsad (kg)",
-    "Results_based_on_answers": "Javoblaringizga asoslangan javoblar",
-    "Body_mass_index\n": "Tana massa indeksi (TMI)",
-    "Weight_degree_1": "Kam vaznlik",
-    "Weight_degree_2": "Normal vazn",
-    "Weight_degree_3": "Ortiqcha vazn",
-    "Weight_degree_4": "Semizlik (ortiqcha yog')"
+    "Results_based_on_answers": "Javoblaringizga asoslangan natijalar",
+    "Body_mass_index": "Tana massa indeksi (TMI)",
+    "Weight_degree_1": "O'ta kam vaznlik",
+    "Weight_degree_2": "Kam vaznlik",
+    "Weight_degree_3": "Normal vazn",
+    "Weight_degree_4": "Ortiqcha vazn",
+    "Weight_degree_5": "Semizlik ",
+    "Weight_degree_6": "O'ta semizlik",
+    "Current_weight": "Hozirgi vazn",
+    "Activity_level": "Aktivlik",
+    "Submit_form": "Analizga yuborish",
+    "Analyzing_your_parameters": "Ma'lumotlar asosida siz uchun maxsus rejimni tayyorlayabmiz",
+    "Please_wait_moment": "Iltimos biroz kuting"
   },
   "ru": {
     "hello": "Zdras",
@@ -89,10 +96,17 @@ export default {
     "Your_goal_weight": "Your_goal_weight",
     "Goal_Weight": "Goal_Weight",
     "Results_based_on_answers": "Результаты на основе ваших ответов",
-    "Body_mass_index\n": "Индекс массы тела (ИМТ)",
-    "Weight_degree_1": "Недостаточная масса тела",
-    "Weight_degree_2": "Нормальная масса тела",
-    "Weight_degree_3": "Избыточная масса тела (предожирение)",
-    "Weight_degree_4": "Ожирение"
+    "Body_mass_index": "Индекс массы тела (ИМТ)",
+    "Weight_degree_1": "Weight_degree_1",
+    "Weight_degree_2": "Недостаточная масса тела",
+    "Weight_degree_3": "Нормальная масса тела",
+    "Weight_degree_4": "Избыточная масса тела (предожирение)",
+    "Weight_degree_5": "Ожирение",
+    "Weight_degree_6": "Weight_degree_6",
+    "Current_weight": "Current_weight",
+    "Activity_level": "Activity_level",
+    "Submit_form": "Submit_form",
+    "Analyzing_your_parameters": "Analyzing_your_parameters",
+    "Please_wait_moment": "Please_wait_moment"
   }
 };
