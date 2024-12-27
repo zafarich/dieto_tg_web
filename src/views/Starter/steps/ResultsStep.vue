@@ -229,7 +229,7 @@ function goBack() {
 }
 
 .results-card {
-  background: #f8f8f8;
+  background: #f8f9fb;
   border-radius: 16px;
 }
 
@@ -315,7 +315,7 @@ function goBack() {
   display: flex;
   align-items: center;
   padding: 16px;
-  background: #f8f9fa;
+  background: #f8f9fb;
   border-radius: 12px;
   transition: all 0.2s ease;
 }

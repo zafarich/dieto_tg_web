@@ -1,279 +1,172 @@
 <script setup>
-import {computed} from "vue";
-import {useI18n} from "vue-i18n";
+const dailyStats = {
+  goal: 3133,
+  consumed: 2831,
+  remaining: 309,
+  nutrients: {
+    protein: {
+      current: 128,
+      goal: 157,
+      color: "#E67E22",
+    },
+    carbs: {
+      current: 375,
+      goal: 431,
+      color: "#F1C40F",
+    },
+    fat: {
+      current: 96,
+      goal: 87,
+      color: "#3498DB",
+    },
+  },
+};
 
-const {t} = useI18n();
-
-const props = defineProps({
-  consumed: {
-    type: Number,
-    default: 1074,
-  },
-  remaining: {
-    type: Number,
-    default: 2059,
-  },
-  goal: {
-    type: Number,
-    default: 3133,
-  },
-  macros: {
-    type: Object,
-    default: () => ({
-      proteins: {current: 56, goal: 157},
-      fats: {current: 48, goal: 87},
-      carbs: {current: 108, goal: 431},
-    }),
-  },
-  size: {
-    type: Number,
-    default: 160,
-  },
-  progressWidth: {
-    type: Number,
-    default: 16,
-  },
-  thumbSize: {
-    type: Number,
-    default: 12,
-  },
-  trackColor: {
-    type: String,
-    default: "#C05032",
-  },
-  progressColor: {
-    type: String,
-    default: "#fff",
-  },
-  thumbColor: {
-    type: String,
-    default: "#fff",
-  },
-});
-
-const percentage = computed(() =>
-  Math.min(Math.round((props.consumed / props.goal) * 100), 100)
-);
-
-const rotation = computed(() => {
-  return percentage.value * 3.6;
-});
-
-const transformOrigin = computed(() => {
-  const radius = (props.size - props.progressWidth) / 2;
-  return `center ${radius}px`;
-});
-
-const circleSize = computed(() => {
-  return props.size - props.progressWidth;
-});
-
-const strokeDasharray = computed(() => {
-  const circumference = circleSize.value * Math.PI;
-  return `${circumference} ${circumference}`;
-});
-
-const strokeDashoffset = computed(() => {
-  const circumference = circleSize.value * Math.PI;
-  const offset = circumference - (percentage.value / 100) * circumference;
-  return offset;
-});
+const calculatePercent = (current, goal) => {
+  return Math.min((current / goal) * 100, 100);
+};
 </script>
 
-<style scoped lang="scss">
-.progress-ring {
-  --track-color: v-bind(trackColor);
-  --progress-color: v-bind(progressColor);
-  --thumb-color: v-bind(thumbColor);
-  --size: v-bind(size + "px");
-
-  width: var(--size);
-  height: var(--size);
-  position: relative;
-  background: var(--bg-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  // SVG Progress Circle
-  svg {
-    transform: rotate(-90deg);
-    overflow: visible;
-
-    circle {
-      fill: none;
-      stroke: #208053;
-      stroke-width: 8px;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.3s ease;
-    }
-
-    .progress {
-      stroke: var(--progress-color);
-      stroke-dasharray: v-bind(strokeDasharray);
-      stroke-dashoffset: v-bind(strokeDashoffset);
-    }
-  }
-
-  // Thumb
-  .thumb {
-    content: "";
-    position: absolute;
-    top: v-bind(progressWidth + "px");
-    left: 50%;
-    width: v-bind(thumbSize + "px");
-    height: v-bind(thumbSize + "px");
-    background: var(--thumb-color);
-    border-radius: 50%;
-    transform: translate(-50%, -50%)
-      rotate(calc(v-bind(rotation) * 1deg - 90deg));
-    transform-origin: v-bind(transformOrigin);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-  }
-
-  // Center content
-  .content {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    z-index: 1;
-
-    .value {
-      font-size: 40px;
-      line-height: 1;
-      font-weight: 500;
-      margin-bottom: 4px;
-      color: #fff;
-    }
-
-    .label {
-      font-size: 14px;
-      opacity: 0.8;
-      color: #fff;
-    }
-  }
-}
-
-// Progress section
-.progress-section {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 2rem;
-
-  .stat {
-    text-align: center;
-
-    .value {
-      font-size: 24px;
-      font-weight: 500;
-      margin-bottom: 2px;
-    }
-
-    .label {
-      font-size: 14px;
-      opacity: 0.8;
-    }
-  }
-}
-</style>
-
 <template>
-  <div class="w-full rounded-2xl py-6 text-white">
-    <div class="progress-section">
-      <!-- Remaining -->
-      <div class="stat">
-        <div class="value">{{ remaining }}</div>
-        <div class="label">{{ t("remaining") }}</div>
+  <div
+    class="daily-stats bg-white/80 backdrop-blur-sm rounded-xl shadow-sm p-4 border border-gray-100"
+  >
+    <!-- Asosiy statistika -->
+    <div class="grid grid-cols-3 gap-2 text-center">
+      <!-- Kunlik maqsad -->
+      <div class="flex flex-col">
+        <span class="text-[14px] text-gray-500 mb-0.5">Maqsad</span>
+        <span class="text-base font-bold text-gray-800">{{
+          dailyStats.goal
+        }}</span>
+        <span class="text-[12px] text-gray-400">kkal</span>
       </div>
 
-      <!-- Progress Circle -->
-      <div class="relative justify-self-center">
-        <div class="progress-ring">
-          <svg :width="size" :height="size">
-            <circle
-              :cx="size / 2"
-              :cy="size / 2"
-              :r="circleSize / 2"
-              class="track"
-            />
-            <circle
-              :cx="size / 2"
-              :cy="size / 2"
-              :r="circleSize / 2"
-              class="progress"
-            />
-          </svg>
-          <div class="thumb"></div>
-          <div class="content">
-            <div class="value">{{ consumed }}</div>
-            <div class="label">{{ t("consumed") }}</div>
-          </div>
-        </div>
+      <!-- Iste'mol qilindi -->
+      <div class="flex flex-col relative">
+        <div class="absolute inset-x-0 h-full border-x border-gray-100"></div>
+        <span class="text-[14px] text-gray-500 mb-0.5">Yeyildi</span>
+        <span class="text-base font-bold text-primary">{{
+          dailyStats.consumed
+        }}</span>
+        <span class="text-[12px] text-gray-400">kkal</span>
       </div>
 
-      <!-- Goal -->
-      <div class="stat">
-        <div class="value">{{ goal }}</div>
-        <div class="label">{{ t("goal") }}</div>
+      <!-- Qoldi -->
+      <div class="flex flex-col">
+        <span class="text-[14px] text-gray-500 mb-0.5">Qoldi</span>
+        <span class="text-base font-bold text-gray-800">{{
+          dailyStats.remaining
+        }}</span>
+        <span class="text-[12px] text-gray-400">kkal</span>
       </div>
     </div>
 
-    <!-- Macros Cards -->
-    <div class="grid grid-cols-3 gap-3">
-      <div class="bg-white text-black rounded-xl p-3 shadow-sm">
-        <div class="text-sm font-medium mb-2">{{ t("proteins") }}</div>
-        <div class="w-full bg-gray-100 rounded-full h-1 mb-2">
+    <!-- Progress bar -->
+    <div class="mt-3 mb-4">
+      <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div
+          class="h-full bg-gradient-to-r from-primary/90 to-primary/80 rounded-full transition-all duration-700"
+          :style="{
+            width: `${(dailyStats.consumed / dailyStats.goal) * 100}%`,
+          }"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Nutrients -->
+    <div class="grid grid-cols-3 gap-7">
+      <!-- Protein -->
+      <div class="nutrient-progress text-center">
+        <span class="text-[14px] font-medium text-gray-600 block mb-1"
+          >Protein</span
+        >
+        <div class="h-1 bg-gray-100 rounded-full overflow-hidden mb-1">
           <div
-            class="bg-red-400 h-full rounded-full transition-all duration-300"
+            class="h-full rounded-full transition-all duration-700"
             :style="{
-              width: `${
-                (macros.proteins.current / macros.proteins.goal) * 100
-              }%`,
+              width: `${calculatePercent(
+                dailyStats.nutrients.protein.current,
+                dailyStats.nutrients.protein.goal
+              )}%`,
+              backgroundColor: dailyStats.nutrients.protein.color,
             }"
           ></div>
         </div>
-        <div class="text-sm">
-          {{ macros.proteins.current }} / {{ macros.proteins.goal }}
-        </div>
+        <span class="text-[12px] text-gray-500 block mt-2">
+          {{ dailyStats.nutrients.protein.current }}/{{
+            dailyStats.nutrients.protein.goal
+          }}
+        </span>
       </div>
 
-      <div class="bg-white text-black rounded-xl p-3 shadow-sm">
-        <div class="text-sm font-medium mb-2">{{ t("fats") }}</div>
-        <div class="w-full bg-gray-100 rounded-full h-1 mb-2">
+      <!-- Carbs -->
+      <div class="nutrient-progress text-center">
+        <span class="text-[14px] font-medium text-gray-600 block mb-1"
+          >Uglevod</span
+        >
+        <div class="h-1 bg-gray-100 rounded-full overflow-hidden mb-1">
           <div
-            class="bg-blue-400 h-full rounded-full transition-all duration-300"
+            class="h-full rounded-full transition-all duration-700"
             :style="{
-              width: `${(macros.fats.current / macros.fats.goal) * 100}%`,
+              width: `${calculatePercent(
+                dailyStats.nutrients.carbs.current,
+                dailyStats.nutrients.carbs.goal
+              )}%`,
+              backgroundColor: dailyStats.nutrients.carbs.color,
             }"
           ></div>
         </div>
-        <div class="text-sm">
-          {{ macros.fats.current }} / {{ macros.fats.goal }}
-        </div>
+        <span class="text-[12px] text-gray-500 block mt-2">
+          {{ dailyStats.nutrients.carbs.current }}/{{
+            dailyStats.nutrients.carbs.goal
+          }}
+        </span>
       </div>
 
-      <div class="bg-white text-black rounded-xl p-3 shadow-sm">
-        <div class="text-sm font-medium mb-2">{{ t("carbs") }}</div>
-        <div class="w-full bg-gray-100 rounded-full h-1 mb-2">
+      <!-- Fat -->
+      <div class="nutrient-progress text-center">
+        <span class="text-[14px] font-medium text-gray-600 block mb-1"
+          >Yog'</span
+        >
+        <div class="h-1 bg-gray-100 rounded-full overflow-hidden mb-1">
           <div
-            class="bg-yellow-400 h-full rounded-full transition-all duration-300"
+            class="h-full rounded-full transition-all duration-700"
             :style="{
-              width: `${(macros.carbs.current / macros.carbs.goal) * 100}%`,
+              width: `${calculatePercent(
+                dailyStats.nutrients.fat.current,
+                dailyStats.nutrients.fat.goal
+              )}%`,
+              backgroundColor: dailyStats.nutrients.fat.color,
             }"
           ></div>
         </div>
-        <div class="text-sm">
-          {{ macros.carbs.current }} / {{ macros.carbs.goal }}
-        </div>
+        <span class="text-[12px] text-gray-500 block mt-2">
+          {{ dailyStats.nutrients.fat.current }}/{{
+            dailyStats.nutrients.fat.goal
+          }}
+        </span>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.text-primary {
+  color: #1976d2;
+}
+
+.from-primary\/90 {
+  --tw-gradient-from: rgba(25, 118, 210, 0.9);
+}
+
+.to-primary\/80 {
+  --tw-gradient-to: rgba(25, 118, 210, 0.8);
+}
+
+@media (min-width: 640px) {
+  .daily-stats {
+    padding: 1.5rem;
+  }
+}
+</style>
