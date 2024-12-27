@@ -38,6 +38,17 @@ const activityLevels = {
   },
 };
 
+const genderOptions = [
+  {
+    value: "male",
+    label: "Erkak",
+  },
+  {
+    value: "female",
+    label: "Ayol",
+  },
+];
+
 // Activity dialog
 const showActivityDialog = ref(false);
 const selectedActivity = ref(userInfo.activity);
@@ -62,6 +73,18 @@ const showBirthdayDialog = ref(false);
 const selectedBirthday = ref(userInfo.birthday);
 const birth_modal = ref(false);
 const birthdayForm = ref(null);
+
+// Gender dialog
+const showGenderDialog = ref(false);
+const selectedGender = ref(userInfo.gender);
+
+// Language dialog
+const showLanguageDialog = ref(false);
+const languages = [
+  {value: "uz", label: "O'zbekcha"},
+  {value: "ru", label: "Русский"},
+];
+const selectedLanguage = ref("uz");
 
 const openActivityModal = () => {
   selectedActivity.value = userInfo.activity;
@@ -93,6 +116,14 @@ const openBirthdayDialog = () => {
   showBirthdayDialog.value = true;
 };
 
+const openGenderDialog = () => {
+  showGenderDialog.value = true;
+};
+
+const openLanguageDialog = () => {
+  showLanguageDialog.value = true;
+};
+
 const saveWeight = () => {
   if (weightForm.value?.validate()) {
     onboardingStore.setWeight(selectedWeight.value);
@@ -119,6 +150,16 @@ const saveBirthday = () => {
     onboardingStore.setBirthday(selectedBirthday.value);
     showBirthdayDialog.value = false;
   }
+};
+
+const saveGender = () => {
+  onboardingStore.setGender(selectedGender.value);
+  showGenderDialog.value = false;
+};
+
+const saveLanguage = () => {
+  // TODO: Implement language change logic
+  showLanguageDialog.value = false;
 };
 </script>
 
@@ -155,7 +196,7 @@ const saveBirthday = () => {
         </h2>
 
         <!-- Info grid -->
-        <div class="space-y-4">
+        <div class="space-y-1">
           <!-- Faollik darajasi -->
           <div class="info-item">
             <div
@@ -210,16 +251,20 @@ const saveBirthday = () => {
           <!-- Joriy vazn -->
           <div class="info-item">
             <div
-              class="flex items-center justify-between py-3 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
               @click="openWeightDialog"
             >
-              <div>
-                <p class="text-sm text-gray-600">Joriy vazn</p>
+              <p class="text-sm text-gray-600">Joriy vazn</p>
+              <div class="flex items-center gap-2">
                 <p class="text-base font-medium text-gray-800">
                   {{ userInfo.weight }} kg
                 </p>
+                <q-icon
+                  name="chevron_right"
+                  size="20px"
+                  class="text-gray-400"
+                />
               </div>
-              <q-icon name="chevron_right" size="20px" class="text-gray-400" />
             </div>
           </div>
 
@@ -265,16 +310,20 @@ const saveBirthday = () => {
           <!-- Maqsad -->
           <div class="info-item">
             <div
-              class="flex items-center justify-between py-3 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
               @click="openGoalWeightDialog"
             >
-              <div>
-                <p class="text-sm text-gray-600">Maqsad</p>
+              <p class="text-sm text-gray-600">Maqsad</p>
+              <div class="flex items-center gap-2">
                 <p class="text-base font-medium text-gray-800">
                   {{ userInfo.goal_weight }} kg
                 </p>
+                <q-icon
+                  name="chevron_right"
+                  size="20px"
+                  class="text-gray-400"
+                />
               </div>
-              <q-icon name="chevron_right" size="20px" class="text-gray-400" />
             </div>
           </div>
 
@@ -320,16 +369,20 @@ const saveBirthday = () => {
           <!-- Bo'y -->
           <div class="info-item">
             <div
-              class="flex items-center justify-between py-3 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
               @click="openHeightDialog"
             >
-              <div>
-                <p class="text-sm text-gray-600">Bo'y</p>
+              <p class="text-sm text-gray-600">Bo'y</p>
+              <div class="flex items-center gap-2">
                 <p class="text-base font-medium text-gray-800">
                   {{ userInfo.height }} sm
                 </p>
+                <q-icon
+                  name="chevron_right"
+                  size="20px"
+                  class="text-gray-400"
+                />
               </div>
-              <q-icon name="chevron_right" size="20px" class="text-gray-400" />
             </div>
           </div>
 
@@ -375,18 +428,100 @@ const saveBirthday = () => {
           <!-- Tug'ilgan kun -->
           <div class="info-item">
             <div
-              class="flex items-center justify-between py-3 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
               @click="openBirthdayDialog"
             >
-              <div>
-                <p class="text-sm text-gray-600">Tug'ilgan kun</p>
+              <p class="text-sm text-gray-600">Tug'ilgan kun</p>
+              <div class="flex items-center gap-2">
                 <p class="text-base font-medium text-gray-800">
                   {{ userInfo.birthday }}
                 </p>
+                <q-icon
+                  name="chevron_right"
+                  size="20px"
+                  class="text-gray-400"
+                />
               </div>
-              <q-icon name="chevron_right" size="20px" class="text-gray-400" />
             </div>
           </div>
+
+          <!-- Jins -->
+          <div class="info-item">
+            <div
+              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              @click="openGenderDialog"
+            >
+              <p class="text-sm text-gray-600">Jins</p>
+              <div class="flex items-center gap-2">
+                <p class="text-base font-medium text-gray-800">
+                  {{
+                    userInfo.gender === "male"
+                      ? "Erkak"
+                      : userInfo.gender === "female"
+                      ? "Ayol"
+                      : ""
+                  }}
+                </p>
+                <q-icon
+                  name="chevron_right"
+                  size="20px"
+                  class="text-gray-400"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Gender Dialog -->
+          <q-dialog v-model="showGenderDialog" persistent>
+            <q-card style="min-width: 350px">
+              <q-card-section class="row items-center q-pb-none">
+                <div class="text-h6">Jins</div>
+                <q-space />
+                <q-btn icon="close" flat round dense v-close-popup />
+              </q-card-section>
+
+              <q-card-section class="q-pt-md">
+                <div class="space-y-3">
+                  <div
+                    v-for="option in genderOptions"
+                    :key="option.value"
+                    class="gender-option"
+                    :class="{selected: selectedGender === option.value}"
+                    @click="selectedGender = option.value"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center"
+                        :class="{
+                          'border-primary': selectedGender === option.value,
+                        }"
+                      >
+                        <div
+                          v-if="selectedGender === option.value"
+                          class="w-2 h-2 rounded-full bg-primary"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-sm font-medium text-gray-800">
+                          {{ option.label }}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </q-card-section>
+
+              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+                <q-btn
+                  unelevated
+                  color="primary"
+                  label="Saqlash"
+                  @click="saveGender"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
 
           <!-- Birthday Dialog -->
           <q-dialog v-model="showBirthdayDialog" persistent>
@@ -440,6 +575,90 @@ const saveBirthday = () => {
                   color="primary"
                   label="Saqlash"
                   @click="saveBirthday"
+                />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </div>
+      </div>
+    </div>
+
+    <!-- Language settings -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mt-4">
+      <div class="p-5">
+        <h2 class="text-xl font-medium text-gray-800 mb-4">Sozlamalar</h2>
+
+        <!-- Info grid -->
+        <div class="space-y-1">
+          <!-- Til -->
+          <div class="info-item">
+            <div
+              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              @click="openLanguageDialog"
+            >
+              <p class="text-sm text-gray-600">Til</p>
+              <div class="flex items-center gap-2">
+                <p class="text-base font-medium text-gray-800">
+                  {{
+                    languages.find((l) => l.value === selectedLanguage)?.label
+                  }}
+                </p>
+                <q-icon
+                  name="chevron_right"
+                  size="20px"
+                  class="text-gray-400"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Language Dialog -->
+          <q-dialog v-model="showLanguageDialog" persistent>
+            <q-card style="min-width: 350px">
+              <q-card-section class="row items-center q-pb-none">
+                <div class="text-h6">Til</div>
+                <q-space />
+                <q-btn icon="close" flat round dense v-close-popup />
+              </q-card-section>
+
+              <q-card-section class="q-pt-md">
+                <div class="space-y-3">
+                  <div
+                    v-for="lang in languages"
+                    :key="lang.value"
+                    class="language-option"
+                    :class="{selected: selectedLanguage === lang.value}"
+                    @click="selectedLanguage = lang.value"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center"
+                        :class="{
+                          'border-primary': selectedLanguage === lang.value,
+                        }"
+                      >
+                        <div
+                          v-if="selectedLanguage === lang.value"
+                          class="w-2 h-2 rounded-full bg-primary"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-sm font-medium text-gray-800">
+                          {{ lang.label }}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </q-card-section>
+
+              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+                <q-btn
+                  unelevated
+                  color="primary"
+                  label="Saqlash"
+                  @click="saveLanguage"
                 />
               </q-card-actions>
             </q-card>
@@ -520,9 +739,9 @@ const saveBirthday = () => {
   transition: all 0.3s ease;
 }
 
-.info-item:hover {
+/* .info-item:hover {
   transform: translateX(4px);
-}
+} */
 
 .info-item:active {
   transform: scale(0.99);
@@ -549,6 +768,40 @@ const saveBirthday = () => {
 }
 
 .activity-option.selected {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.gender-option {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background-color: rgb(249 250 251 / 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gender-option:hover {
+  background-color: rgb(243 244 246);
+}
+
+.gender-option.selected {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.language-option {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background-color: rgb(249 250 251 / 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-option:hover {
+  background-color: rgb(243 244 246);
+}
+
+.language-option.selected {
   background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
