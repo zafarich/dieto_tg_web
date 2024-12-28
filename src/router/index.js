@@ -6,6 +6,7 @@ import OnboardingPage from "@/views/Starter/index.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import OnboardingLayout from "@/layouts/OnboardingLayout.vue";
 import {onboardingMiddleware} from "./middleware.js";
+import MenusPage from "@/views/MenusPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,11 @@ const router = createRouter({
           path: "profile",
           name: "profile",
           component: ProfilePage,
+        },
+        {
+          path: "/menus",
+          name: "menus",
+          component: MenusPage,
         },
       ],
     },

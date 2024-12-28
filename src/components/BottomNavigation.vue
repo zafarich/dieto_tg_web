@@ -31,6 +31,29 @@ const navigateTo = (routeName) => {
         <span class="text-xs mt-1">Asosiy</span>
       </button>
 
+      <!-- Menus -->
+      <button
+        @click="navigateTo('menus')"
+        class="flex flex-col items-center p-2 rounded-xl transition-colors"
+        :class="{
+          'text-primary': currentRoute === 'menus',
+          'text-gray-400': currentRoute !== 'menus',
+        }"
+      >
+        <q-icon name="restaurant_menu" size="24px" />
+        <span class="text-xs mt-1">Menyular</span>
+      </button>
+
+      <!-- Add Button -->
+      <div class="relative">
+        <button
+          @click="$emit('add')"
+          class="w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary-dark transition-colors"
+        >
+          <q-icon name="add" size="32px" />
+        </button>
+      </div>
+
       <!-- Statistics -->
       <button
         @click="navigateTo('statistics')"
@@ -43,16 +66,6 @@ const navigateTo = (routeName) => {
         <q-icon name="bar_chart" size="24px" />
         <span class="text-xs mt-1">Statistika</span>
       </button>
-
-      <!-- Add Button -->
-      <div class="relative">
-        <button
-          @click="$emit('add')"
-          class="w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary-dark transition-colors"
-        >
-          <q-icon name="add" size="32px" />
-        </button>
-      </div>
 
       <!-- Profile -->
       <button

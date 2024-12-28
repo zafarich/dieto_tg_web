@@ -534,10 +534,9 @@ const saveLanguage = () => {
 
               <q-card-section class="q-pt-md">
                 <q-form ref="birthdayForm">
-                  <BaseInput
+                  <q-input
                     v-model="selectedBirthday"
                     outlined
-                    append
                     mask="##.##.####"
                     :placeholder="'DD.MM.YYYY'"
                     :rules="[
@@ -547,7 +546,7 @@ const saveLanguage = () => {
                     ]"
                     @keyup.enter="saveBirthday"
                   >
-                    <template #append>
+                    <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
                         <q-popup-proxy
                           v-model="birth_modal"
@@ -564,7 +563,7 @@ const saveLanguage = () => {
                         </q-popup-proxy>
                       </q-icon>
                     </template>
-                  </BaseInput>
+                  </q-input>
                 </q-form>
               </q-card-section>
 
