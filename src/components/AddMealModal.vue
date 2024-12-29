@@ -78,16 +78,4 @@ const addProduct = () => {
   </div>
 </template>
 
-<style scoped>
-.bg-primary {
-  background-color: #1976d2;
-}
-
-.bg-primary-dark {
-  background-color: #1565c0;
-}
-
-.border-primary {
-  border-color: #1976d2;
-}
-</style>
+<style scoped></style>

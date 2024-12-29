@@ -1,15 +1,21 @@
 <script setup>
 import {ref, computed} from "vue";
 import {useRouter, useRoute} from "vue-router";
+import {useModalsStore} from "@/stores/modals";
 
 const router = useRouter();
 const route = useRoute();
+const modalsStore = useModalsStore();
 
 const currentRoute = computed(() => route.name);
 
 const navigateTo = (routeName) => {
   router.push({name: routeName});
 };
+
+function openAddMealCategory() {
+  modalsStore.openCategoryDialog();
+}
 </script>
 
 <template>
@@ -47,7 +53,7 @@ const navigateTo = (routeName) => {
       <!-- Add Button -->
       <div class="relative">
         <button
-          @click="$emit('add')"
+          @click="openAddMealCategory"
           class="w-14 h-14 rounded-full bg-primary text-white shadow-lg flex items-center justify-center hover:bg-primary-dark transition-colors"
         >
           <q-icon name="add" size="32px" />
