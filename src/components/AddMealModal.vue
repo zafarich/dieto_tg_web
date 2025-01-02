@@ -257,7 +257,7 @@ const addMealWithComment = async () => {
             </button>
           </div>
 
-          <div class="text-sm text-red-600 mb-4">
+          <div v-if="selectedMethod === 'ai'" class="text-sm text-red-600 mb-4">
             Mahsulot/ovqatni qo'shish uchun rasm orqali yoki mahsulot nomini
             kiriting. Bu sun'iy intelekt orqali avtomatik amalga oshiriladi
           </div>
