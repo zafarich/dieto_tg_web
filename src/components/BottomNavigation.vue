@@ -69,8 +69,8 @@ function openAddMealCategory() {
           'text-gray-400': currentRoute !== 'statistics',
         }"
       >
-        <q-icon name="bar_chart" size="24px" />
-        <span class="text-xs mt-1">Statistika</span>
+        <q-icon name="school" size="24px" />
+        <span class="text-xs mt-1">Darslar</span>
       </button>
 
       <!-- Profile -->

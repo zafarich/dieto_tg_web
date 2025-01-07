@@ -172,7 +172,7 @@ const goToSubscriptionDetails = () => {
 <template>
   <div class="profile-page">
     <!-- Premium bo'lmagan foydalanuvchi uchun -->
-    <div v-if="userInfo.isPremium" class="p-4">
+    <div v-if="!userInfo.isPremium" class="p-4">
       <div
         class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-4 text-white"
       >

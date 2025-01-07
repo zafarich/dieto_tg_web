@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Home from "@/views/Home.vue";
-import StatisticsPage from "@/views/StatisticsPage.vue";
+import LessonsPage from "@/views/LessonsPage.vue";
 import ProfilePage from "@/views/ProfilePage.vue";
 import OnboardingPage from "@/views/Starter/index.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
@@ -23,7 +23,7 @@ const router = createRouter({
         {
           path: "statistics",
           name: "statistics",
-          component: StatisticsPage,
+          component: LessonsPage,
         },
         {
           path: "profile",
