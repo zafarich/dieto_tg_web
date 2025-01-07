@@ -1,6 +1,7 @@
 <script setup>
 import MealProducts from "./MealProducts.vue";
 import {ref} from "vue";
+import {useRouter} from "vue-router";
 
 const props = defineProps({
   meals: {
@@ -11,8 +12,22 @@ const props = defineProps({
 
 const emit = defineEmits(["addProduct"]);
 
+const router = useRouter();
+
 const openAddModal = (mealType) => {
   emit("addProduct", mealType);
+};
+
+const openMealDetails = (meal) => {
+  router.push({
+    name: "meal-details",
+    params: {
+      type: meal.type,
+    },
+    query: {
+      date: new Date().toISOString(),
+    },
+  });
 };
 </script>
 
@@ -22,6 +37,7 @@ const openAddModal = (mealType) => {
       <div
         v-for="meal in meals"
         :key="meal.type"
+        @click="openMealDetails(meal)"
         class="meal-item bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden transition-all duration-300 border border-gray-100"
       >
         <div class="p-3 flex justify-between items-center">
@@ -62,7 +78,7 @@ const openAddModal = (mealType) => {
           </div>
           <button
             class="w-9 h-9 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl transition-all duration-300 flex items-center justify-center"
-            @click="openAddModal(meal.type)"
+            @click.stop="openAddModal(meal.type)"
           >
             <q-icon name="add" size="16px" />
           </button>

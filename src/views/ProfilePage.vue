@@ -1,6 +1,7 @@
 <script setup>
 import {useOnboardingStore} from "@/stores/onboarding";
 import {ref, computed} from "vue";
+import {useRouter} from "vue-router";
 import {useQuasar} from "quasar";
 import ActivityLevelSelector from "@/components/ActivityLevelSelector.vue";
 import BaseInput from "@/components/base/BaseInput.vue";
@@ -9,7 +10,7 @@ import validate from "@/utils/validate";
 const $q = useQuasar();
 const onboardingStore = useOnboardingStore();
 const userInfo = onboardingStore.userInfo;
-
+const router = useRouter();
 const activityLevels = {
   sedentary: {
     title: "Sakkiz soatlik o'tirgan turmush tarzi",
@@ -161,633 +162,558 @@ const saveLanguage = () => {
   // TODO: Implement language change logic
   showLanguageDialog.value = false;
 };
+
+const goToSubscriptionDetails = () => {
+  // TODO: Obuna haqida ma'lumotlar sahifasiga o'tish logikasi
+  router.push({name: "subscription-details"});
+};
 </script>
 
 <template>
-  <div class="profile-page p-2.5">
-    <!-- Profile header -->
-    <div class="flex flex-col items-center mb-6">
-      <!-- <div class="relative mb-3">
-        <div
-          class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md"
-        >
-          <img src="" alt="Profile" class="w-full h-full object-cover" />
+  <div class="profile-page">
+    <!-- Premium bo'lmagan foydalanuvchi uchun -->
+    <div v-if="userInfo.isPremium" class="p-4">
+      <div
+        class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-4 text-white"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <q-icon name="workspace_premium" size="24px" />
+            <span class="font-medium">Premium</span>
+          </div>
+          <div class="text-xs bg-white/20 px-2 py-1 rounded">7 kun bepul</div>
         </div>
+
+        <div class="text-sm opacity-90 mb-6">
+          Premium obuna orqali barcha funksiyalardan cheklovsiz foydalaning
+        </div>
+
+        <div class="space-y-3 mb-6">
+          <div class="flex items-center gap-2 text-sm">
+            <q-icon name="check_circle" size="16px" />
+            <span>Cheklanmagan mahsulotlar qo'shish</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <q-icon name="check_circle" size="16px" />
+            <span>Rasm orqali mahsulot qo'shish</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <q-icon name="check_circle" size="16px" />
+            <span>Statistika va tahlillar</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <q-icon name="check_circle" size="16px" />
+            <span>Retseptlar va tavsiyalar</span>
+          </div>
+        </div>
+
         <button
-          @click="handleImageUpload"
-          class="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg"
+          class="w-full h-12 bg-white text-blue-600 rounded-xl font-medium"
         >
-          <q-icon name="camera_alt" size="18px" />
+          Premium ga o'tish
         </button>
-      </div> -->
-      <h1 class="text-xl font-semibold text-gray-800">
-        {{ userInfo.fullName }}
-      </h1>
-      <p class="text-sm text-gray-500">
-        @{{ userInfo.fullName.toLowerCase().replace(/\s+/g, "") }}
-      </p>
+      </div>
     </div>
 
-    <!-- Profile info -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100">
-      <div class="p-5">
-        <h2 class="text-xl font-medium text-gray-800 mb-4">
-          Mening ma'lumotlarim
-        </h2>
+    <!-- Premium foydalanuvchi uchun -->
+    <div v-else class="p-4">
+      <div class="bg-green-500 rounded-2xl p-4 text-white">
+        <div class="flex items-center justify-center gap-2">
+          <q-icon name="verified" size="24px" />
+          <span class="font-medium">Siz Premium foydalanuvchisiz</span>
+        </div>
+        <div class="flex items-center justify-center mt-3">
+          <button
+            class="text-xs bg-white/20 px-2 py-1 rounded"
+            @click="goToSubscriptionDetails"
+          >
+            Boshqarish
+          </button>
+        </div>
+      </div>
+    </div>
 
-        <!-- Info grid -->
-        <div class="space-y-1">
-          <!-- Faollik darajasi -->
-          <div class="info-item">
+    <!-- Profil ma'lumotlari -->
+    <div class="px-4">
+      <div class="space-y-4">
+        <!-- Profil -->
+        <div class="bg-white rounded-2xl p-4 border border-gray-100">
+          <div class="flex items-center gap-4">
             <div
-              class="py-3 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center"
+            >
+              <q-icon name="person" size="32px" class="text-gray-400" />
+            </div>
+            <div>
+              <div class="font-medium">Foydalanuvchi</div>
+              <div class="text-sm text-gray-500">+998 90 123 45 67</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sozlamalar -->
+        <div
+          class="bg-white rounded-2xl overflow-hidden border border-gray-100"
+        >
+          <div class="divide-y divide-gray-100">
+            <!-- Faollik darajasi -->
+            <div
+              class="flex items-center justify-between p-4"
               @click="openActivityModal"
             >
-              <div class="flex items-center justify-between mb-2">
-                <div>
-                  <p class="text-sm text-gray-600">Faollik darajasi</p>
-                  <p class="text-base font-medium text-gray-800">
-                    {{ activityLevels[userInfo.activity]?.title }}
-                  </p>
-                </div>
+              <div class="flex items-center gap-3">
                 <q-icon
-                  name="chevron_right"
+                  name="fitness_center"
                   size="20px"
                   class="text-gray-400"
                 />
+                <span>Faollik darajasi</span>
               </div>
-              <p class="text-xs text-gray-500">
-                {{ activityLevels[userInfo.activity]?.description }}
-              </p>
-              <!-- Activity Level Indicator -->
-              <div class="mt-3">
-                <div class="flex gap-1.5">
-                  <div
-                    v-for="(level, key) in activityLevels"
-                    :key="key"
-                    class="flex-1"
-                  >
-                    <div
-                      class="h-1.5 rounded-full transition-all duration-300"
-                      :class="{
-                        'opacity-100 scale-y-125': key === userInfo.activity,
-                        'opacity-30 scale-y-100': key !== userInfo.activity,
-                      }"
-                      :style="{
-                        backgroundColor: level.color,
-                      }"
-                    ></div>
-                    <div
-                      v-if="key === userInfo.activity"
-                      class="w-1.5 h-1.5 rounded-full mx-auto mt-1"
-                      :style="{backgroundColor: level.color}"
-                    ></div>
-                  </div>
-                </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{ activityLevels[userInfo.activity]?.title }}</span>
+                <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
-          </div>
 
-          <!-- Joriy vazn -->
-          <div class="info-item">
+            <!-- Joriy vazn -->
             <div
-              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between p-4"
               @click="openWeightDialog"
             >
-              <p class="text-sm text-gray-600">Joriy vazn</p>
-              <div class="flex items-center gap-2">
-                <p class="text-base font-medium text-gray-800">
-                  {{ userInfo.weight }} kg
-                </p>
+              <div class="flex items-center gap-3">
                 <q-icon
-                  name="chevron_right"
+                  name="monitor_weight"
                   size="20px"
                   class="text-gray-400"
                 />
+                <span>Joriy vazn</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{ userInfo.weight }} kg</span>
+                <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
-          </div>
 
-          <!-- Weight Dialog -->
-          <q-dialog v-model="showWeightDialog" persistent>
-            <q-card style="min-width: 350px">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">Joriy vazn</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-
-              <q-card-section class="q-pt-md">
-                <BaseInput
-                  ref="weightForm"
-                  v-model="selectedWeight"
-                  type="number"
-                  outlined
-                  suffix="kg"
-                  placeholder="Vazn"
-                  :rules="[
-                    (v) => validate.required(v),
-                    (v) => validate.number(v),
-                    (v) => validate.min_weight(v, 35),
-                    (v) => validate.max_weight(v, 200),
-                  ]"
-                  @keyup.enter="saveWeight"
-                />
-              </q-card-section>
-
-              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
-                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
-                <q-btn
-                  unelevated
-                  color="primary"
-                  label="Saqlash"
-                  @click="saveWeight"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-
-          <!-- Maqsad -->
-          <div class="info-item">
+            <!-- Maqsad vazn -->
             <div
-              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between p-4"
               @click="openGoalWeightDialog"
             >
-              <p class="text-sm text-gray-600">Maqsad</p>
-              <div class="flex items-center gap-2">
-                <p class="text-base font-medium text-gray-800">
-                  {{ userInfo.goal_weight }} kg
-                </p>
-                <q-icon
-                  name="chevron_right"
-                  size="20px"
-                  class="text-gray-400"
-                />
+              <div class="flex items-center gap-3">
+                <q-icon name="flag" size="20px" class="text-gray-400" />
+                <span>Maqsad vazn</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{ userInfo.goal_weight }} kg</span>
+                <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
-          </div>
 
-          <!-- Goal Weight Dialog -->
-          <q-dialog v-model="showGoalWeightDialog" persistent>
-            <q-card style="min-width: 350px">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">Maqsad vazni</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-
-              <q-card-section class="q-pt-md">
-                <BaseInput
-                  ref="goalWeightForm"
-                  v-model="selectedGoalWeight"
-                  type="number"
-                  outlined
-                  suffix="kg"
-                  placeholder="Maqsad vazni"
-                  :rules="[
-                    (v) => validate.required(v),
-                    (v) => validate.number(v),
-                    (v) => validate.min_weight(v, 35),
-                    (v) => validate.max_weight(v, 200),
-                  ]"
-                  @keyup.enter="saveGoalWeight"
-                />
-              </q-card-section>
-
-              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
-                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
-                <q-btn
-                  unelevated
-                  color="primary"
-                  label="Saqlash"
-                  @click="saveGoalWeight"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-
-          <!-- Bo'y -->
-          <div class="info-item">
+            <!-- Bo'y -->
             <div
-              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between p-4"
               @click="openHeightDialog"
             >
-              <p class="text-sm text-gray-600">Bo'y</p>
-              <div class="flex items-center gap-2">
-                <p class="text-base font-medium text-gray-800">
-                  {{ userInfo.height }} sm
-                </p>
-                <q-icon
-                  name="chevron_right"
-                  size="20px"
-                  class="text-gray-400"
-                />
+              <div class="flex items-center gap-3">
+                <q-icon name="height" size="20px" class="text-gray-400" />
+                <span>Bo'y</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{ userInfo.height }} sm</span>
+                <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
-          </div>
 
-          <!-- Height Dialog -->
-          <q-dialog v-model="showHeightDialog" persistent>
-            <q-card style="min-width: 350px">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">Bo'y</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-
-              <q-card-section class="q-pt-md">
-                <BaseInput
-                  ref="heightForm"
-                  v-model="selectedHeight"
-                  type="number"
-                  outlined
-                  suffix="sm"
-                  placeholder="Bo'y"
-                  :rules="[
-                    (v) => validate.required(v),
-                    (v) => validate.number(v),
-                    (v) => validate.min_height(v, 100),
-                    (v) => validate.max_height(v, 250),
-                  ]"
-                  @keyup.enter="saveHeight"
-                />
-              </q-card-section>
-
-              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
-                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
-                <q-btn
-                  unelevated
-                  color="primary"
-                  label="Saqlash"
-                  @click="saveHeight"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-
-          <!-- Tug'ilgan kun -->
-          <div class="info-item">
+            <!-- Tug'ilgan kun -->
             <div
-              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between p-4"
               @click="openBirthdayDialog"
             >
-              <p class="text-sm text-gray-600">Tug'ilgan kun</p>
-              <div class="flex items-center gap-2">
-                <p class="text-base font-medium text-gray-800">
-                  {{ userInfo.birthday }}
-                </p>
-                <q-icon
-                  name="chevron_right"
-                  size="20px"
-                  class="text-gray-400"
-                />
+              <div class="flex items-center gap-3">
+                <q-icon name="cake" size="20px" class="text-gray-400" />
+                <span>Tug'ilgan kun</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{ userInfo.birthday }}</span>
+                <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
-          </div>
 
-          <!-- Jins -->
-          <div class="info-item">
+            <!-- Jins -->
             <div
-              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between p-4"
               @click="openGenderDialog"
             >
-              <p class="text-sm text-gray-600">Jins</p>
-              <div class="flex items-center gap-2">
-                <p class="text-base font-medium text-gray-800">
-                  {{
-                    userInfo.gender === "male"
-                      ? "Erkak"
-                      : userInfo.gender === "female"
-                      ? "Ayol"
-                      : ""
-                  }}
-                </p>
-                <q-icon
-                  name="chevron_right"
-                  size="20px"
-                  class="text-gray-400"
-                />
+              <div class="flex items-center gap-3">
+                <q-icon name="wc" size="20px" class="text-gray-400" />
+                <span>Jins</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{ userInfo.gender === "male" ? "Erkak" : "Ayol" }}</span>
+                <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
-          </div>
 
-          <!-- Gender Dialog -->
-          <q-dialog v-model="showGenderDialog" persistent>
-            <q-card style="min-width: 350px">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">Jins</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-
-              <q-card-section class="q-pt-md">
-                <div class="space-y-3">
-                  <div
-                    v-for="option in genderOptions"
-                    :key="option.value"
-                    class="gender-option"
-                    :class="{selected: selectedGender === option.value}"
-                    @click="selectedGender = option.value"
-                  >
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center"
-                        :class="{
-                          'border-primary': selectedGender === option.value,
-                        }"
-                      >
-                        <div
-                          v-if="selectedGender === option.value"
-                          class="w-2 h-2 rounded-full bg-primary"
-                        ></div>
-                      </div>
-                      <div>
-                        <h3 class="text-sm font-medium text-gray-800">
-                          {{ option.label }}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </q-card-section>
-
-              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
-                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
-                <q-btn
-                  unelevated
-                  color="primary"
-                  label="Saqlash"
-                  @click="saveGender"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-
-          <!-- Birthday Dialog -->
-          <q-dialog v-model="showBirthdayDialog" persistent>
-            <q-card style="min-width: 350px">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">Tug'ilgan kun</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-
-              <q-card-section class="q-pt-md">
-                <q-form ref="birthdayForm">
-                  <q-input
-                    v-model="selectedBirthday"
-                    outlined
-                    mask="##.##.####"
-                    :placeholder="'DD.MM.YYYY'"
-                    :rules="[
-                      (v) => validate.required(v),
-                      (v) => validate.date(v),
-                      (v) => validate.min_age(v, 13),
-                    ]"
-                    @keyup.enter="saveBirthday"
-                  >
-                    <template v-slot:append>
-                      <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy
-                          v-model="birth_modal"
-                          cover
-                          transition-show="scale"
-                          transition-hide="scale"
-                        >
-                          <q-date
-                            v-model="selectedBirthday"
-                            @update:model-value="birth_modal = false"
-                            mask="DD.MM.YYYY"
-                            :options="(date) => new Date(date) <= new Date()"
-                          />
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
-                </q-form>
-              </q-card-section>
-
-              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
-                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
-                <q-btn
-                  unelevated
-                  color="primary"
-                  label="Saqlash"
-                  @click="saveBirthday"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-        </div>
-      </div>
-    </div>
-
-    <!-- Language settings -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mt-4">
-      <div class="p-5">
-        <h2 class="text-xl font-medium text-gray-800 mb-4">Sozlamalar</h2>
-
-        <!-- Info grid -->
-        <div class="space-y-1">
-          <!-- Til -->
-          <div class="info-item">
+            <!-- Til -->
             <div
-              class="flex items-center justify-between py-2 px-4 bg-gray-50/50 rounded-xl cursor-pointer"
+              class="flex items-center justify-between p-4"
               @click="openLanguageDialog"
             >
-              <p class="text-sm text-gray-600">Til</p>
-              <div class="flex items-center gap-2">
-                <p class="text-base font-medium text-gray-800">
-                  {{
-                    languages.find((l) => l.value === selectedLanguage)?.label
-                  }}
-                </p>
-                <q-icon
-                  name="chevron_right"
-                  size="20px"
-                  class="text-gray-400"
-                />
+              <div class="flex items-center gap-3">
+                <q-icon name="translate" size="20px" class="text-gray-400" />
+                <span>Til</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span>{{
+                  languages.find((l) => l.value === selectedLanguage)?.label
+                }}</span>
+                <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
+
+            <!-- Yordam -->
+            <div class="flex items-center justify-between p-4">
+              <div class="flex items-center gap-3">
+                <q-icon name="help" size="20px" class="text-gray-400" />
+                <span>Yordam</span>
+              </div>
+              <q-icon name="chevron_right" size="20px" class="text-gray-400" />
+            </div>
+
+            <!-- Dastur haqida -->
+            <div class="flex items-center justify-between p-4">
+              <div class="flex items-center gap-3">
+                <q-icon name="info" size="20px" class="text-gray-400" />
+                <span>Dastur haqida</span>
+              </div>
+              <q-icon name="chevron_right" size="20px" class="text-gray-400" />
+            </div>
           </div>
-
-          <!-- Language Dialog -->
-          <q-dialog v-model="showLanguageDialog" persistent>
-            <q-card style="min-width: 350px">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">Til</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-
-              <q-card-section class="q-pt-md">
-                <div class="space-y-3">
-                  <div
-                    v-for="lang in languages"
-                    :key="lang.value"
-                    class="language-option"
-                    :class="{selected: selectedLanguage === lang.value}"
-                    @click="selectedLanguage = lang.value"
-                  >
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center"
-                        :class="{
-                          'border-primary': selectedLanguage === lang.value,
-                        }"
-                      >
-                        <div
-                          v-if="selectedLanguage === lang.value"
-                          class="w-2 h-2 rounded-full bg-primary"
-                        ></div>
-                      </div>
-                      <div>
-                        <h3 class="text-sm font-medium text-gray-800">
-                          {{ lang.label }}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </q-card-section>
-
-              <q-card-actions align="right" class="bg-gray-50 q-pa-md">
-                <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
-                <q-btn
-                  unelevated
-                  color="primary"
-                  label="Saqlash"
-                  @click="saveLanguage"
-                />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
         </div>
       </div>
     </div>
 
-    <!-- Activity Level Dialog -->
-    <q-dialog v-model="showActivityDialog" persistent>
-      <q-card class="q-pa-none" style="min-width: 350px; max-width: 400px">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Faollik darajasi</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
+    <!-- Pastki bo'sh joy -->
+    <div class="h-24"></div>
+  </div>
 
-        <q-card-section class="q-pt-md">
-          <div class="space-y-3">
-            <div
-              v-for="(level, key) in activityLevels"
-              :key="key"
-              class="activity-option"
-              :class="{selected: selectedActivity === key}"
-              @click="selectedActivity = key"
-            >
-              <div class="flex items-center gap-3">
+  <!-- Dialoglar -->
+  <q-dialog v-model="showActivityDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Faollik darajasi</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-md">
+        <div class="space-y-3">
+          <div
+            v-for="(level, key) in activityLevels"
+            :key="key"
+            class="activity-option"
+            :class="{selected: selectedActivity === key}"
+            @click="selectedActivity = key"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-4 h-4 rounded-full border-2 flex items-center justify-center"
+                :style="{borderColor: level.color}"
+              >
                 <div
-                  class="w-4 h-4 rounded-full border-2 flex items-center justify-center"
-                  :style="{borderColor: level.color}"
-                >
-                  <div
-                    v-if="selectedActivity === key"
-                    class="w-2 h-2 rounded-full"
-                    :style="{backgroundColor: level.color}"
-                  ></div>
-                </div>
-                <div>
-                  <h3 class="text-sm font-medium text-gray-800">
-                    {{ level.title }}
-                  </h3>
-                  <p class="text-xs text-gray-500">{{ level.description }}</p>
-                </div>
+                  v-if="selectedActivity === key"
+                  class="w-2 h-2 rounded-full"
+                  :style="{backgroundColor: level.color}"
+                ></div>
+              </div>
+              <div>
+                <h3 class="text-sm font-medium text-gray-800">
+                  {{ level.title }}
+                </h3>
+                <p class="text-xs text-gray-500">{{ level.description }}</p>
               </div>
             </div>
           </div>
-        </q-card-section>
+        </div>
+      </q-card-section>
 
-        <q-card-actions align="right" class="bg-gray-50 q-pa-md">
-          <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
-          <q-btn
-            unelevated
-            color="primary"
-            label="Saqlash"
-            @click="saveActivity"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-  </div>
+      <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+        <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+        <q-btn
+          unelevated
+          color="primary"
+          label="Saqlash"
+          @click="saveActivity"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showWeightDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Joriy vazn</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-md">
+        <BaseInput
+          ref="weightForm"
+          v-model="selectedWeight"
+          type="number"
+          outlined
+          suffix="kg"
+          placeholder="Vazn"
+          :rules="[
+            (v) => validate.required(v),
+            (v) => validate.number(v),
+            (v) => validate.min_weight(v, 35),
+            (v) => validate.max_weight(v, 200),
+          ]"
+          @keyup.enter="saveWeight"
+        />
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+        <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+        <q-btn unelevated color="primary" label="Saqlash" @click="saveWeight" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showGoalWeightDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Maqsad vazn</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-md">
+        <BaseInput
+          ref="goalWeightForm"
+          v-model="selectedGoalWeight"
+          type="number"
+          outlined
+          suffix="kg"
+          placeholder="Maqsad vazn"
+          :rules="[
+            (v) => validate.required(v),
+            (v) => validate.number(v),
+            (v) => validate.min_weight(v, 35),
+            (v) => validate.max_weight(v, 200),
+          ]"
+          @keyup.enter="saveGoalWeight"
+        />
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+        <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+        <q-btn
+          unelevated
+          color="primary"
+          label="Saqlash"
+          @click="saveGoalWeight"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showHeightDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Bo'y</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-md">
+        <BaseInput
+          ref="heightForm"
+          v-model="selectedHeight"
+          type="number"
+          outlined
+          suffix="sm"
+          placeholder="Bo'y"
+          :rules="[
+            (v) => validate.required(v),
+            (v) => validate.number(v),
+            (v) => validate.min_height(v, 100),
+            (v) => validate.max_height(v, 250),
+          ]"
+          @keyup.enter="saveHeight"
+        />
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+        <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+        <q-btn unelevated color="primary" label="Saqlash" @click="saveHeight" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showBirthdayDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Tug'ilgan kun</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-md">
+        <q-form ref="birthdayForm">
+          <q-input
+            v-model="selectedBirthday"
+            outlined
+            mask="##.##.####"
+            :placeholder="'DD.MM.YYYY'"
+            :rules="[
+              (v) => validate.required(v),
+              (v) => validate.date(v),
+              (v) => validate.min_age(v, 13),
+            ]"
+            @keyup.enter="saveBirthday"
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy
+                  v-model="birth_modal"
+                  cover
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date
+                    v-model="selectedBirthday"
+                    @update:model-value="birth_modal = false"
+                    mask="DD.MM.YYYY"
+                    :options="(date) => new Date(date) <= new Date()"
+                  />
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </q-form>
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+        <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+        <q-btn
+          unelevated
+          color="primary"
+          label="Saqlash"
+          @click="saveBirthday"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showGenderDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Jins</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-md">
+        <div class="space-y-3">
+          <div
+            v-for="option in genderOptions"
+            :key="option.value"
+            class="gender-option"
+            :class="{selected: selectedGender === option.value}"
+            @click="selectedGender = option.value"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center"
+                :class="{
+                  'border-primary': selectedGender === option.value,
+                }"
+              >
+                <div
+                  v-if="selectedGender === option.value"
+                  class="w-2 h-2 rounded-full bg-primary"
+                ></div>
+              </div>
+              <div>
+                <h3 class="text-sm font-medium text-gray-800">
+                  {{ option.label }}
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+        <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+        <q-btn unelevated color="primary" label="Saqlash" @click="saveGender" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="showLanguageDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Til</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pt-md">
+        <div class="space-y-3">
+          <div
+            v-for="lang in languages"
+            :key="lang.value"
+            class="language-option"
+            :class="{selected: selectedLanguage === lang.value}"
+            @click="selectedLanguage = lang.value"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center"
+                :class="{
+                  'border-primary': selectedLanguage === lang.value,
+                }"
+              >
+                <div
+                  v-if="selectedLanguage === lang.value"
+                  class="w-2 h-2 rounded-full bg-primary"
+                ></div>
+              </div>
+              <div>
+                <h3 class="text-sm font-medium text-gray-800">
+                  {{ lang.label }}
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-gray-50 q-pa-md">
+        <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
+        <q-btn
+          unelevated
+          color="primary"
+          label="Saqlash"
+          @click="saveLanguage"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <style scoped>
 .profile-page {
-  max-width: 600px;
-  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #f8fafc;
 }
 
-.text-primary {
-  color: #1976d2;
-}
-
-.bg-primary {
-  background-color: #1976d2;
-}
-
-.info-item {
-  transition: all 0.3s ease;
-}
-
-/* .info-item:hover {
-  transform: translateX(4px);
-} */
-
-.info-item:active {
-  transform: scale(0.99);
-}
-
-.scale-y-125 {
-  transform: scaleY(1.25);
-}
-
-.scale-y-100 {
-  transform: scaleY(1);
-}
-
-.activity-option {
-  padding: 1rem;
-  border-radius: 0.75rem;
-  background-color: rgb(249 250 251 / 0.5);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.activity-option:hover {
-  background-color: rgb(243 244 246);
-}
-
-.activity-option.selected {
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.gender-option {
-  padding: 1rem;
-  border-radius: 0.75rem;
-  background-color: rgb(249 250 251 / 0.5);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.gender-option:hover {
-  background-color: rgb(243 244 246);
-}
-
-.gender-option.selected {
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
+.activity-option,
+.gender-option,
 .language-option {
   padding: 1rem;
   border-radius: 0.75rem;
@@ -796,10 +722,14 @@ const saveLanguage = () => {
   transition: all 0.2s ease;
 }
 
+.activity-option:hover,
+.gender-option:hover,
 .language-option:hover {
   background-color: rgb(243 244 246);
 }
 
+.activity-option.selected,
+.gender-option.selected,
 .language-option.selected {
   background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);

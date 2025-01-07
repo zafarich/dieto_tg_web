@@ -14,6 +14,10 @@ const selectedMethod = ref("ai"); // 'ai' yoki 'manual'
 const selectedTab = ref("image"); // 'image' yoki 'name'
 const description = ref(""); // izoh
 const productName = ref(""); // mahsulot nomi
+const productWeight = ref(""); // mahsulot og'irligi
+const proteins = ref(""); // oqsillar
+const fats = ref(""); // yog'lar
+const carbs = ref(""); // uglevodlar
 const showCamera = ref(false); // kamera modali
 const videoStream = ref(null); // kamera stream
 const videoRef = ref(null); // video elementi
@@ -28,6 +32,11 @@ const commentInputRef = ref(null);
 const closeModal = () => {
   modalsStore.closeAddMealModal();
   description.value = "";
+  productName.value = "";
+  productWeight.value = "";
+  proteins.value = "";
+  fats.value = "";
+  carbs.value = "";
   capturedImage.value = null;
   if (videoStream.value) {
     videoStream.value.getTracks().forEach((track) => track.stop());
@@ -208,6 +217,49 @@ const addMealWithComment = async () => {
     addMeal({...aiResult.value, additionalComment: additionalComment.value});
   }
 };
+
+// Qo'lda kiritilgan mahsulotni qo'shish
+const addManualProduct = () => {
+  if (!productName.value.trim()) {
+    $q.notify({
+      message: "Mahsulot nomini kiriting",
+      color: "negative",
+    });
+    return;
+  }
+
+  if (!productWeight.value || productWeight.value <= 0) {
+    $q.notify({
+      message: "Mahsulot og'irligini kiriting",
+      color: "negative",
+    });
+    return;
+  }
+
+  if (!proteins.value || !fats.value || !carbs.value) {
+    $q.notify({
+      message: "BZU qiymatlarini kiriting",
+      color: "negative",
+    });
+    return;
+  }
+
+  // Kaloriyani hisoblash (1g protein = 4 kkal, 1g yog' = 9 kkal, 1g uglevod = 4 kkal)
+  const calories =
+    (proteins.value * 4 + fats.value * 9 + carbs.value * 4) *
+    (productWeight.value / 100);
+
+  const meal = {
+    name: productName.value,
+    weight: parseFloat(productWeight.value),
+    calories: Math.round(calories),
+    proteins: parseFloat(proteins.value),
+    fats: parseFloat(fats.value),
+    carbs: parseFloat(carbs.value),
+  };
+
+  addMeal(meal);
+};
 </script>
 
 <template>
@@ -361,6 +413,71 @@ const addMealWithComment = async () => {
 
             <!-- Pastdagi bo'sh joy -->
             <div class="h-24"></div>
+          </template>
+
+          <!-- Qo'lda kiritish -->
+          <template v-if="selectedMethod === 'manual'">
+            <div class="space-y-4">
+              <BaseInput
+                v-model="productName"
+                type="text"
+                outlined
+                class="w-full"
+                label="Mahsulot/ovqat nomi"
+              />
+
+              <BaseInput
+                v-model="productWeight"
+                type="number"
+                outlined
+                class="w-full"
+                label="Mahsulot og'irligi (gramm)"
+              />
+
+              <div class="text-base font-medium text-gray-800 mb-2">
+                100 grammdagi protain, yog', uglevod
+              </div>
+
+              <div class="grid grid-cols-3 gap-4">
+                <BaseInput
+                  v-model="proteins"
+                  type="number"
+                  outlined
+                  class="w-full"
+                  label="Oqsillar"
+                />
+
+                <BaseInput
+                  v-model="fats"
+                  type="number"
+                  outlined
+                  class="w-full"
+                  label="Yog'lar"
+                />
+
+                <BaseInput
+                  v-model="carbs"
+                  type="number"
+                  outlined
+                  class="w-full"
+                  label="Uglevodlar"
+                />
+              </div>
+
+              <div
+                class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100"
+              >
+                <button
+                  class="w-full py-3 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                  @click="addManualProduct"
+                >
+                  Qo'shish
+                </button>
+              </div>
+
+              <!-- Pastdagi bo'sh joy -->
+              <div class="h-24"></div>
+            </div>
           </template>
         </div>
 

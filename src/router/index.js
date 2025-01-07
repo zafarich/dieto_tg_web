@@ -35,6 +35,16 @@ const router = createRouter({
           name: "menus",
           component: MenusPage,
         },
+        {
+          path: "meal/:type",
+          name: "meal-details",
+          component: () => import("@/views/MealDetailsPage.vue"),
+        },
+        {
+          path: "/subscription-details",
+          name: "subscription-details",
+          component: () => import("@/views/SubscriptionDetailsPage.vue"),
+        },
       ],
     },
     {
