@@ -87,14 +87,32 @@ const languages = [
 ];
 const selectedLanguage = ref("uz");
 
+// Loader holati
+const loading = ref(false);
+
 const openActivityModal = () => {
   selectedActivity.value = userInfo.activity;
   showActivityDialog.value = true;
 };
 
-const saveActivity = () => {
-  onboardingStore.setActivity(selectedActivity.value);
-  showActivityDialog.value = false;
+const saveActivity = async () => {
+  $q.loading.show(); // Loaderni ko'rsatish
+  try {
+    onboardingStore.setActivity(selectedActivity.value);
+    await onboardingStore.updateUserData();
+    showActivityDialog.value = false;
+    $q.notify({
+      message: "Ma'lumotlar yangilandi",
+      color: "positive",
+    });
+  } catch (error) {
+    $q.notify({
+      message: error.message || "Xatolik yuz berdi",
+      color: "negative",
+    });
+  } finally {
+    $q.loading.hide(); // Loaderni yashirish
+  }
 };
 
 const openWeightDialog = () => {
@@ -103,7 +121,7 @@ const openWeightDialog = () => {
 };
 
 const openGoalWeightDialog = () => {
-  selectedGoalWeight.value = userInfo.goal_weight;
+  selectedGoalWeight.value = userInfo.goalWeight;
   showGoalWeightDialog.value = true;
 };
 
@@ -125,42 +143,119 @@ const openLanguageDialog = () => {
   showLanguageDialog.value = true;
 };
 
-const saveWeight = () => {
+const saveWeight = async () => {
   if (weightForm.value?.validate()) {
-    onboardingStore.setWeight(selectedWeight.value);
-    showWeightDialog.value = false;
+    $q.loading.show(); // Loaderni ko'rsatish
+    try {
+      onboardingStore.setWeight(selectedWeight.value);
+      await onboardingStore.updateUserData();
+      showWeightDialog.value = false;
+      $q.notify({
+        message: "Ma'lumotlar yangilandi",
+        color: "positive",
+      });
+    } catch (error) {
+      $q.notify({
+        message: error.message || "Xatolik yuz berdi",
+        color: "negative",
+      });
+    } finally {
+      $q.loading.hide(); // Loaderni yashirish
+    }
   }
 };
 
-const saveGoalWeight = () => {
+const saveGoalWeight = async () => {
   if (goalWeightForm.value?.validate()) {
-    onboardingStore.setGoalWeight(selectedGoalWeight.value);
-    showGoalWeightDialog.value = false;
+    $q.loading.show(); // Loaderni ko'rsatish
+    try {
+      onboardingStore.setGoalWeight(selectedGoalWeight.value);
+      await onboardingStore.updateUserData();
+      showGoalWeightDialog.value = false;
+      $q.notify({
+        message: "Ma'lumotlar yangilandi",
+        color: "positive",
+      });
+    } catch (error) {
+      $q.notify({
+        message: error.message || "Xatolik yuz berdi",
+        color: "negative",
+      });
+    } finally {
+      $q.loading.hide(); // Loaderni yashirish
+    }
   }
 };
 
-const saveHeight = () => {
+const saveHeight = async () => {
   if (heightForm.value?.validate()) {
-    onboardingStore.setHeight(selectedHeight.value);
-    showHeightDialog.value = false;
+    $q.loading.show(); // Loaderni ko'rsatish
+    try {
+      onboardingStore.setHeight(selectedHeight.value);
+      await onboardingStore.updateUserData();
+      showHeightDialog.value = false;
+      $q.notify({
+        message: "Ma'lumotlar yangilandi",
+        color: "positive",
+      });
+    } catch (error) {
+      $q.notify({
+        message: error.message || "Xatolik yuz berdi",
+        color: "negative",
+      });
+    } finally {
+      $q.loading.hide(); // Loaderni yashirish
+    }
   }
 };
 
-const saveBirthday = () => {
+const saveBirthday = async () => {
   if (birthdayForm.value?.validate()) {
-    onboardingStore.setBirthday(selectedBirthday.value);
-    showBirthdayDialog.value = false;
+    $q.loading.show(); // Loaderni ko'rsatish
+    try {
+      onboardingStore.setBirthday(selectedBirthday.value);
+      await onboardingStore.updateUserData();
+      showBirthdayDialog.value = false;
+      $q.notify({
+        message: "Ma'lumotlar yangilandi",
+        color: "positive",
+      });
+    } catch (error) {
+      $q.notify({
+        message: error.message || "Xatolik yuz berdi",
+        color: "negative",
+      });
+    } finally {
+      $q.loading.hide(); // Loaderni yashirish
+    }
   }
 };
 
-const saveGender = () => {
-  onboardingStore.setGender(selectedGender.value);
-  showGenderDialog.value = false;
+const saveGender = async () => {
+  $q.loading.show(); // Loaderni ko'rsatish
+  try {
+    onboardingStore.setGender(selectedGender.value);
+    await onboardingStore.updateUserData();
+    showGenderDialog.value = false;
+    $q.notify({
+      message: "Ma'lumotlar yangilandi",
+      color: "positive",
+    });
+  } catch (error) {
+    $q.notify({
+      message: error.message || "Xatolik yuz berdi",
+      color: "negative",
+    });
+  } finally {
+    $q.loading.hide(); // Loaderni yashirish
+  }
 };
 
 const saveLanguage = () => {
+  $q.loading.show(); // Loaderni ko'rsatish
   // TODO: Implement language change logic
   showLanguageDialog.value = false;
+  $q.loading.hide(); // Loaderni yashirish
 };
 
 const goToSubscriptionDetails = () => {
@@ -172,7 +267,7 @@ const goToSubscriptionDetails = () => {
 <template>
   <div class="profile-page">
     <!-- Premium bo'lmagan foydalanuvchi uchun -->
-    <div v-if="!userInfo.isPremium" class="p-4">
+    <div v-if="userInfo.userStatus === 'free'" class="p-4">
       <div
         class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-4 text-white"
       >
@@ -304,7 +399,7 @@ const goToSubscriptionDetails = () => {
                 <span>Maqsad vazn</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ userInfo.goal_weight }} kg</span>
+                <span>{{ userInfo.goalWeight }} kg</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -456,24 +551,24 @@ const goToSubscriptionDetails = () => {
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
-
-      <q-card-section class="q-pt-md">
-        <BaseInput
-          ref="weightForm"
-          v-model="selectedWeight"
-          type="number"
-          outlined
-          suffix="kg"
-          placeholder="Vazn"
-          :rules="[
-            (v) => validate.required(v),
-            (v) => validate.number(v),
-            (v) => validate.min_weight(v, 35),
-            (v) => validate.max_weight(v, 200),
-          ]"
-          @keyup.enter="saveWeight"
-        />
-      </q-card-section>
+      <q-form ref="weightForm">
+        <q-card-section class="q-pt-md">
+          <BaseInput
+            v-model="selectedWeight"
+            type="number"
+            outlined
+            suffix="kg"
+            placeholder="Vazn"
+            :rules="[
+              (v) => validate.required(v),
+              (v) => validate.number(v),
+              (v) => validate.min_weight(v, 35),
+              (v) => validate.max_weight(v, 200),
+            ]"
+            @keyup.enter="saveWeight"
+          />
+        </q-card-section>
+      </q-form>
 
       <q-card-actions align="right" class="bg-gray-50 q-pa-md">
         <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
@@ -489,25 +584,24 @@ const goToSubscriptionDetails = () => {
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
-
-      <q-card-section class="q-pt-md">
-        <BaseInput
-          ref="goalWeightForm"
-          v-model="selectedGoalWeight"
-          type="number"
-          outlined
-          suffix="kg"
-          placeholder="Maqsad vazn"
-          :rules="[
-            (v) => validate.required(v),
-            (v) => validate.number(v),
-            (v) => validate.min_weight(v, 35),
-            (v) => validate.max_weight(v, 200),
-          ]"
-          @keyup.enter="saveGoalWeight"
-        />
-      </q-card-section>
-
+      <q-form ref="goalWeightForm">
+        <q-card-section class="q-pt-md">
+          <BaseInput
+            v-model="selectedGoalWeight"
+            type="number"
+            outlined
+            suffix="kg"
+            placeholder="Maqsad vazn"
+            :rules="[
+              (v) => validate.required(v),
+              (v) => validate.number(v),
+              (v) => validate.min_weight(v, 35),
+              (v) => validate.max_weight(v, 200),
+            ]"
+            @keyup.enter="saveGoalWeight"
+          />
+        </q-card-section>
+      </q-form>
       <q-card-actions align="right" class="bg-gray-50 q-pa-md">
         <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
         <q-btn
@@ -528,24 +622,24 @@ const goToSubscriptionDetails = () => {
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
-      <q-card-section class="q-pt-md">
-        <BaseInput
-          ref="heightForm"
-          v-model="selectedHeight"
-          type="number"
-          outlined
-          suffix="sm"
-          placeholder="Bo'y"
-          :rules="[
-            (v) => validate.required(v),
-            (v) => validate.number(v),
-            (v) => validate.min_height(v, 100),
-            (v) => validate.max_height(v, 250),
-          ]"
-          @keyup.enter="saveHeight"
-        />
-      </q-card-section>
-
+      <q-form ref="heightForm">
+        <q-card-section class="q-pt-md">
+          <BaseInput
+            v-model="selectedHeight"
+            type="number"
+            outlined
+            suffix="sm"
+            placeholder="Bo'y"
+            :rules="[
+              (v) => validate.required(v),
+              (v) => validate.number(v),
+              (v) => validate.min_height(v, 100),
+              (v) => validate.max_height(v, 250),
+            ]"
+            @keyup.enter="saveHeight"
+          />
+        </q-card-section>
+      </q-form>
       <q-card-actions align="right" class="bg-gray-50 q-pa-md">
         <q-btn flat label="Bekor qilish" color="gray" v-close-popup />
         <q-btn unelevated color="primary" label="Saqlash" @click="saveHeight" />

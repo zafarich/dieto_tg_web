@@ -1,6 +1,6 @@
 import {createApp} from "vue";
 import {createPinia} from "pinia";
-import {Quasar, Dialog} from "quasar";
+import {Quasar, Dialog, Notify, Loading} from "quasar";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import router from "./router";
 import i18n from "./i18n";
@@ -20,6 +20,8 @@ const app = createApp(App);
 app.use(Quasar, {
   plugins: {
     Dialog,
+    Notify,
+    Loading,
   },
   config: {
     brand: {},

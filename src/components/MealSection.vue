@@ -1,7 +1,7 @@
 <script setup>
 import MealProducts from "./MealProducts.vue";
-import {ref} from "vue";
 import {useRouter} from "vue-router";
+import {useMealsStore} from "@/stores/meals";
 
 const props = defineProps({
   meals: {
@@ -11,8 +11,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["addProduct"]);
-
 const router = useRouter();
+const mealsStore = useMealsStore();
 
 const openAddModal = (mealType) => {
   emit("addProduct", mealType);
@@ -21,12 +21,8 @@ const openAddModal = (mealType) => {
 const openMealDetails = (meal) => {
   router.push({
     name: "meal-details",
-    params: {
-      type: meal.type,
-    },
-    query: {
-      date: new Date().toISOString(),
-    },
+    params: {type: meal.type},
+    query: {date: mealsStore.selectedDate.toISOString()},
   });
 };
 </script>

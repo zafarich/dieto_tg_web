@@ -7,7 +7,7 @@ import {useI18n} from "vue-i18n";
 const {t} = useI18n();
 const store = useOnboardingStore();
 const router = useRouter();
-const isLoading = ref(true);
+const isLoading = ref(false);
 
 const bmi = computed(() => {
   const weight = store.userInfo.weight;
@@ -55,15 +55,10 @@ const bmiRanges = [
   {label: "Severely Obese", range: [35, 40], color: "#d73027", width: 20.25},
 ];
 
-onMounted(() => {
-  // Simulate analysis time
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 2000);
-});
-
-function submit() {
-  store.completeOnboarding();
+async function submit() {
+  isLoading.value = true;
+  await store.completeOnboarding();
+  isLoading.value = false;
   router.push({name: "home"});
 }
 

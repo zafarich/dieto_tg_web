@@ -1,26 +1,75 @@
 <script setup>
-const dailyStats = {
-  goal: 3133,
-  consumed: 2831,
-  remaining: 309,
+import {computed} from "vue";
+import {useOnboardingStore} from "@/stores/onboarding";
+import {useMealsStore} from "@/stores/meals";
+
+const onboardingStore = useOnboardingStore();
+const mealsStore = useMealsStore();
+
+// Kunlik me'yorlar
+const goals = computed(() => {
+  const {calories, proteins, fats, carbs} = onboardingStore.dailyGoals;
+  return {
+    goal: calories,
+    nutrients: {
+      protein: {
+        goal: proteins,
+        color: "#E67E22",
+      },
+      carbs: {
+        goal: carbs,
+        color: "#F1C40F",
+      },
+      fat: {
+        goal: fats,
+        color: "#3498DB",
+      },
+    },
+  };
+});
+
+// Kunlik progress
+const progress = computed(() => {
+  const {calories, proteins, fats, carbs} = mealsStore.dailyProgress;
+  return {
+    consumed: calories || 0,
+    remaining: goals.value.goal - calories || 0,
+    nutrients: {
+      protein: {
+        current: proteins || 0,
+      },
+      carbs: {
+        current: carbs || 0,
+      },
+      fat: {
+        current: fats || 0,
+      },
+    },
+  };
+});
+
+const dailyStats = computed(() => ({
+  goal: goals.value.goal,
+  consumed: progress.value.consumed,
+  remaining: progress.value.remaining,
   nutrients: {
     protein: {
-      current: 128,
-      goal: 157,
-      color: "#E67E22",
+      current: progress.value.nutrients.protein.current,
+      goal: goals.value.nutrients.protein.goal,
+      color: goals.value.nutrients.protein.color,
     },
     carbs: {
-      current: 375,
-      goal: 431,
-      color: "#F1C40F",
+      current: progress.value.nutrients.carbs.current,
+      goal: goals.value.nutrients.carbs.goal,
+      color: goals.value.nutrients.carbs.color,
     },
     fat: {
-      current: 96,
-      goal: 87,
-      color: "#3498DB",
+      current: progress.value.nutrients.fat.current,
+      goal: goals.value.nutrients.fat.goal,
+      color: goals.value.nutrients.fat.color,
     },
   },
-};
+}));
 
 const calculatePercent = (current, goal) => {
   return Math.min((current / goal) * 100, 100);
