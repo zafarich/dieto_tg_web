@@ -4,17 +4,20 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
 });
 
-// Telegram WebApp ma'lumotlarini headerga qo'shish
-api.interceptors.request.use((config) => {
-  //   if (window?.Telegram?.WebApp) {
-  const userID =
-    window?.Telegram?.WebApp?.initDataUnsafe?.user?.id || 907423583;
-  if (userID) {
-    config.headers["telegram-user-id"] = userID;
+// Request interceptor
+api.interceptors.request.use(
+  (config) => {
+    const telegramUserId =
+      window?.Telegram?.WebApp?.initDataUnsafe?.user?.id || 907423583;
+    if (telegramUserId) {
+      config.headers["telegram-user-id"] = telegramUserId;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  //   }
-  return config;
-});
+);
 
 export const userAPI = {
   createOrUpdate: (userData) => api.post("/users", userData),
