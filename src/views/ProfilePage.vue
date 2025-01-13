@@ -6,6 +6,7 @@ import {useQuasar} from "quasar";
 import ActivityLevelSelector from "@/components/ActivityLevelSelector.vue";
 import BaseInput from "@/components/base/BaseInput.vue";
 import validate from "@/utils/validate";
+import {trimBetween} from "@/utils/helpers";
 
 const $q = useQuasar();
 const onboardingStore = useOnboardingStore();
@@ -89,6 +90,11 @@ const selectedLanguage = ref("uz");
 
 // Loader holati
 const loading = ref(false);
+
+// Edit Dialog
+const showEditDialog = ref(false);
+const editedName = ref(onboardingStore.userInfo.fullName);
+const editedPhone = ref(onboardingStore.userInfo.phone.toString().slice(-9));
 
 const openActivityModal = () => {
   selectedActivity.value = userInfo.activity;
@@ -262,6 +268,46 @@ const goToSubscriptionDetails = () => {
   // TODO: Obuna haqida ma'lumotlar sahifasiga o'tish logikasi
   router.push({name: "subscription-details"});
 };
+
+const saveUserData = async (field, value) => {
+  $q.loading.show();
+  try {
+    onboardingStore.setUserInfo(field, value);
+    await onboardingStore.updateUserData();
+    $q.notify({
+      message: "Ma'lumotlar yangilandi",
+      color: "positive",
+    });
+  } catch (error) {
+    $q.notify({
+      message: error.message || "Xatolik yuz berdi",
+      color: "negative",
+    });
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+const saveEditedInfo = async () => {
+  try {
+    $q.loading.show();
+    onboardingStore.setFullName(editedName.value);
+    onboardingStore.setPhone(`998${trimBetween(editedPhone.value)}`);
+    await onboardingStore.updateUserData(true); // onlyProfile = true
+    showEditDialog.value = false;
+    $q.notify({
+      message: "Ma'lumotlar yangilandi",
+      color: "positive",
+    });
+  } catch (error) {
+    $q.notify({
+      message: error.message || "Xatolik yuz berdi",
+      color: "negative",
+    });
+  } finally {
+    $q.loading.hide();
+  }
+};
 </script>
 
 <template>
@@ -333,16 +379,30 @@ const goToSubscriptionDetails = () => {
       <div class="space-y-4">
         <!-- Profil -->
         <div class="bg-white rounded-2xl p-4 border border-gray-100">
-          <div class="flex items-center gap-4">
-            <div
-              class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center"
-            >
-              <q-icon name="person" size="32px" class="text-gray-400" />
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div
+                class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center"
+              >
+                <q-icon name="person" size="32px" class="text-gray-400" />
+              </div>
+              <div>
+                <div class="font-medium">
+                  {{ onboardingStore.userInfo.fullName }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  {{ onboardingStore.userInfo.phone }}
+                </div>
+              </div>
             </div>
-            <div>
-              <div class="font-medium">Foydalanuvchi</div>
-              <div class="text-sm text-gray-500">+998 90 123 45 67</div>
-            </div>
+            <q-btn
+              icon="edit"
+              color="gray"
+              size="12px"
+              flat
+              round
+              @click="showEditDialog = true"
+            />
           </div>
         </div>
 
@@ -352,11 +412,8 @@ const goToSubscriptionDetails = () => {
         >
           <div class="divide-y divide-gray-100">
             <!-- Faollik darajasi -->
-            <div
-              class="flex items-center justify-between p-4"
-              @click="openActivityModal"
-            >
-              <div class="flex items-center gap-3">
+            <div class="p-4" @click="openActivityModal">
+              <div class="flex items-center gap-3 mb-2">
                 <q-icon
                   name="fitness_center"
                   size="20px"
@@ -450,7 +507,7 @@ const goToSubscriptionDetails = () => {
             </div>
 
             <!-- Til -->
-            <div
+            <!-- <div
               class="flex items-center justify-between p-4"
               @click="openLanguageDialog"
             >
@@ -464,25 +521,25 @@ const goToSubscriptionDetails = () => {
                 }}</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
-            </div>
+            </div> -->
 
             <!-- Yordam -->
-            <div class="flex items-center justify-between p-4">
+            <!-- <div class="flex items-center justify-between p-4">
               <div class="flex items-center gap-3">
                 <q-icon name="help" size="20px" class="text-gray-400" />
                 <span>Yordam</span>
               </div>
               <q-icon name="chevron_right" size="20px" class="text-gray-400" />
-            </div>
+            </div> -->
 
             <!-- Dastur haqida -->
-            <div class="flex items-center justify-between p-4">
+            <!-- <div class="flex items-center justify-between p-4">
               <div class="flex items-center gap-3">
                 <q-icon name="info" size="20px" class="text-gray-400" />
                 <span>Dastur haqida</span>
               </div>
               <q-icon name="chevron_right" size="20px" class="text-gray-400" />
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -795,6 +852,36 @@ const goToSubscriptionDetails = () => {
           label="Saqlash"
           @click="saveLanguage"
         />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <!-- Edit Dialog -->
+  <q-dialog v-model="showEditDialog">
+    <q-card style="min-width: 350px">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-h6">Ma'lumotlarni o'zgartirish</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section>
+        <BaseInput v-model="editedName" label="Ism" outlined class="q-mb-md" />
+        <BaseInput
+          v-model="editedPhone"
+          label="Telefon raqami"
+          outlined
+          mask="## ### ## ##"
+          class="input-with-prepend"
+          prepend
+        >
+          <template v-slot:prepend>+998</template>
+        </BaseInput>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Bekor qilish" v-close-popup />
+        <q-btn color="primary" label="Saqlash" @click="saveEditedInfo" />
       </q-card-actions>
     </q-card>
   </q-dialog>

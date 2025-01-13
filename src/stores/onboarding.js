@@ -16,6 +16,7 @@ export const useOnboardingStore = defineStore(
       height: null,
       activity: null,
       goalWeight: null,
+      phone: null,
     });
 
     // Kunlik me'yorlar alohida ref
@@ -58,7 +59,7 @@ export const useOnboardingStore = defineStore(
     };
 
     // Foydalanuvchi ma'lumotlarini yangilash
-    const updateUserData = async () => {
+    const updateUserData = async (onlyProfile = false) => {
       try {
         const tgUserId =
           window?.Telegram?.WebApp?.initDataUnsafe?.user?.id || 907423583;
@@ -77,10 +78,14 @@ export const useOnboardingStore = defineStore(
           height: userInfo.value.height,
           activityLevel: userInfo.value.activity,
           goalWeight: userInfo.value.goalWeight,
+          phone: userInfo.value.phone,
+          onlyProfile,
         });
 
-        // Me'yorlarni yangilash
-        await updateDailyNorms();
+        // Agar onlyProfile=true bo'lsa, me'yorlarni qayta hisoblamaymiz
+        if (!onlyProfile) {
+          await updateDailyNorms();
+        }
       } catch (error) {
         console.error("Ma'lumotlarni yangilash xatosi:", error);
         throw error;
@@ -131,6 +136,10 @@ export const useOnboardingStore = defineStore(
       userInfo.value.goalWeight = weight;
     };
 
+    const setPhone = (phone) => {
+      userInfo.value.phone = phone;
+    };
+
     const nextStep = () => {
       currentStep.value++;
     };
@@ -152,6 +161,7 @@ export const useOnboardingStore = defineStore(
       setHeight,
       setActivity,
       setGoalWeight,
+      setPhone,
       nextStep,
       prevStep,
       completeOnboarding,

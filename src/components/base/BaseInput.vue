@@ -147,4 +147,24 @@ defineExpose({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.input-with-prepend {
+  .q-field__prepend {
+    display: none;
+  }
+}
+
+.input-with-prepend.q-field--focused,
+.input-with-prepend.q-field--float {
+  .q-field__prepend {
+    display: block;
+    position: absolute;
+    font-size: 14px;
+    height: 25px;
+    top: 25px;
+    color: #333;
+    letter-spacing: 0.2px;
+    padding-right: 0px;
+  }
+}
+</style>
