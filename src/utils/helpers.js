@@ -6,6 +6,19 @@ const {setVerticalScrollPosition} = scroll;
 
 import {useAuthStore} from "@/stores/auth";
 
+export function convertToDateFormat(isoDate) {
+  if (!isoDate) return "";
+
+  const dateObj = new Date(isoDate);
+  if (dateObj.toString() === "Invalid Date") return "Invalid Date";
+
+  const day = String(dateObj.getDate()).padStart(2, "0");
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const year = dateObj.getFullYear();
+
+  return `${day}.${month}.${year}`;
+}
+
 export function getServerError({response}, field = "errorMessage") {
   if (!response) return "";
 

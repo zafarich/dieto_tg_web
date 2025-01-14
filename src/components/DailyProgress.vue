@@ -1,77 +1,34 @@
 <script setup>
 import {computed} from "vue";
-import {useOnboardingStore} from "@/stores/onboarding";
-import {useMealsStore} from "@/stores/meals";
 
-const onboardingStore = useOnboardingStore();
-const mealsStore = useMealsStore();
-
-// Kunlik me'yorlar
-const goals = computed(() => {
-  const {calories, proteins, fats, carbs} = onboardingStore.dailyGoals;
-  return {
-    goal: calories,
-    nutrients: {
-      protein: {
-        goal: proteins,
-        color: "#E67E22",
-      },
-      carbs: {
-        goal: carbs,
-        color: "#F1C40F",
-      },
-      fat: {
-        goal: fats,
-        color: "#3498DB",
-      },
-    },
-  };
-});
-
-// Kunlik progress
-const progress = computed(() => {
-  const {calories, proteins, fats, carbs} = mealsStore.dailyProgress;
-  return {
-    consumed: calories || 0,
-    remaining: goals.value.goal - calories || 0,
-    nutrients: {
-      protein: {
-        current: proteins || 0,
-      },
-      carbs: {
-        current: carbs || 0,
-      },
-      fat: {
-        current: fats || 0,
-      },
-    },
-  };
-});
-
-const dailyStats = computed(() => ({
-  goal: goals.value.goal,
-  consumed: progress.value.consumed,
-  remaining: progress.value.remaining,
-  nutrients: {
-    protein: {
-      current: progress.value.nutrients.protein.current,
-      goal: goals.value.nutrients.protein.goal,
-      color: goals.value.nutrients.protein.color,
-    },
-    carbs: {
-      current: progress.value.nutrients.carbs.current,
-      goal: goals.value.nutrients.carbs.goal,
-      color: goals.value.nutrients.carbs.color,
-    },
-    fat: {
-      current: progress.value.nutrients.fat.current,
-      goal: goals.value.nutrients.fat.goal,
-      color: goals.value.nutrients.fat.color,
-    },
+// Props definition
+const props = defineProps({
+  goal: {
+    type: Number,
+    required: true,
   },
-}));
+  consumed: {
+    type: Number,
+    required: true,
+  },
+  remaining: {
+    type: Number,
+    required: true,
+  },
+  nutrients: {
+    type: Object,
+    required: true,
+    default: () => ({
+      protein: {current: 0, goal: 0, color: "#E67E22"},
+      carbs: {current: 0, goal: 0, color: "#F1C40F"},
+      fat: {current: 0, goal: 0, color: "#3498DB"},
+    }),
+  },
+});
 
+// Progress foizini hisoblash
 const calculatePercent = (current, goal) => {
+  if (!goal) return 0;
   return Math.min((current / goal) * 100, 100);
 };
 </script>
@@ -85,9 +42,7 @@ const calculatePercent = (current, goal) => {
       <!-- Kunlik maqsad -->
       <div class="flex flex-col">
         <span class="text-[14px] text-gray-500 mb-0.5">Maqsad</span>
-        <span class="text-base font-bold text-gray-800">{{
-          dailyStats.goal
-        }}</span>
+        <span class="text-base font-bold text-gray-800">{{ goal }}</span>
         <span class="text-[12px] text-gray-400">kkal</span>
       </div>
 
@@ -95,18 +50,14 @@ const calculatePercent = (current, goal) => {
       <div class="flex flex-col relative">
         <div class="absolute inset-x-0 h-full border-x border-gray-100"></div>
         <span class="text-[14px] text-gray-500 mb-0.5">Yeyildi</span>
-        <span class="text-base font-bold text-primary">{{
-          dailyStats.consumed
-        }}</span>
+        <span class="text-base font-bold text-primary">{{ consumed }}</span>
         <span class="text-[12px] text-gray-400">kkal</span>
       </div>
 
       <!-- Qoldi -->
       <div class="flex flex-col">
         <span class="text-[14px] text-gray-500 mb-0.5">Qoldi</span>
-        <span class="text-base font-bold text-gray-800">{{
-          dailyStats.remaining
-        }}</span>
+        <span class="text-base font-bold text-gray-800">{{ remaining }}</span>
         <span class="text-[12px] text-gray-400">kkal</span>
       </div>
     </div>
@@ -117,7 +68,7 @@ const calculatePercent = (current, goal) => {
         <div
           class="h-full bg-gradient-to-r from-primary/90 to-primary/80 rounded-full transition-all duration-700"
           :style="{
-            width: `${(dailyStats.consumed / dailyStats.goal) * 100}%`,
+            width: `${calculatePercent(consumed, goal)}%`,
           }"
         ></div>
       </div>
@@ -135,17 +86,15 @@ const calculatePercent = (current, goal) => {
             class="h-full rounded-full transition-all duration-700"
             :style="{
               width: `${calculatePercent(
-                dailyStats.nutrients.protein.current,
-                dailyStats.nutrients.protein.goal
+                nutrients.protein.current,
+                nutrients.protein.goal
               )}%`,
-              backgroundColor: dailyStats.nutrients.protein.color,
+              backgroundColor: nutrients.protein.color,
             }"
           ></div>
         </div>
         <span class="text-[12px] text-gray-500 block mt-2">
-          {{ dailyStats.nutrients.protein.current }}/{{
-            dailyStats.nutrients.protein.goal
-          }}
+          {{ nutrients.protein.current }}/{{ nutrients.protein.goal }}
         </span>
       </div>
 
@@ -159,17 +108,15 @@ const calculatePercent = (current, goal) => {
             class="h-full rounded-full transition-all duration-700"
             :style="{
               width: `${calculatePercent(
-                dailyStats.nutrients.carbs.current,
-                dailyStats.nutrients.carbs.goal
+                nutrients.carbs.current,
+                nutrients.carbs.goal
               )}%`,
-              backgroundColor: dailyStats.nutrients.carbs.color,
+              backgroundColor: nutrients.carbs.color,
             }"
           ></div>
         </div>
         <span class="text-[12px] text-gray-500 block mt-2">
-          {{ dailyStats.nutrients.carbs.current }}/{{
-            dailyStats.nutrients.carbs.goal
-          }}
+          {{ nutrients.carbs.current }}/{{ nutrients.carbs.goal }}
         </span>
       </div>
 
@@ -183,17 +130,15 @@ const calculatePercent = (current, goal) => {
             class="h-full rounded-full transition-all duration-700"
             :style="{
               width: `${calculatePercent(
-                dailyStats.nutrients.fat.current,
-                dailyStats.nutrients.fat.goal
+                nutrients.fat.current,
+                nutrients.fat.goal
               )}%`,
-              backgroundColor: dailyStats.nutrients.fat.color,
+              backgroundColor: nutrients.fat.color,
             }"
           ></div>
         </div>
         <span class="text-[12px] text-gray-500 block mt-2">
-          {{ dailyStats.nutrients.fat.current }}/{{
-            dailyStats.nutrients.fat.goal
-          }}
+          {{ nutrients.fat.current }}/{{ nutrients.fat.goal }}
         </span>
       </div>
     </div>

@@ -8,7 +8,6 @@ export const useOnboardingStore = defineStore(
     const currentStep = ref(1);
     const isCompleted = ref(false);
     const userInfo = ref({
-      language: null,
       gender: null,
       fullName: null,
       birthday: null,
@@ -19,77 +18,22 @@ export const useOnboardingStore = defineStore(
       phone: null,
     });
 
-    // Kunlik me'yorlar alohida ref
-    const dailyNorms = ref({
-      calories: null,
-      proteins: null,
-      fats: null,
-      carbs: null,
-      recommendation: null,
-    });
+    // O'zgartirilgan maydonlarni saqlash uchun obyekt
+    const updatedFields = ref({});
 
-    // Computed property orqali me'yorlarni olish
-    const dailyGoals = computed(() => ({
-      calories: dailyNorms.value.calories || 0,
-      proteins: dailyNorms.value.proteins || 0,
-      fats: dailyNorms.value.fats || 0,
-      carbs: dailyNorms.value.carbs || 0,
-      // recommendation: dailyNorms.value.recommendation,
-    }));
-
-    // Me'yorlarni yangilash
-    const updateDailyNorms = async () => {
+    const updateUserData = async (updatedFields) => {
       try {
-        const tgUserId =
-          window?.Telegram?.WebApp?.initDataUnsafe?.user?.id || 907423583;
-        const {data} = await userAPI.calculateGoals(tgUserId);
-        console.log(data);
-
-        dailyNorms.value = {
-          calories: data?.data?.dailyCalories,
-          proteins: data?.data?.dailyProteins,
-          fats: data?.data?.dailyFats,
-          carbs: data?.data?.dailyCarbs,
-          // recommendation: data?.data?.recommendation,
-        };
-      } catch (error) {
-        console.error("Me'yorlarni yangilashda xatolik:", error);
-        throw error;
-      }
-    };
-
-    // Foydalanuvchi ma'lumotlarini yangilash
-    const updateUserData = async (onlyProfile = false) => {
-      try {
-        const tgUserId =
-          window?.Telegram?.WebApp?.initDataUnsafe?.user?.id || 907423583;
-
-        if (!tgUserId) {
-          throw new Error("Telegram foydalanuvchi ma'lumotlari topilmadi");
-        }
-
-        // Foydalanuvchini yangilash
-        await userAPI.createOrUpdate({
-          telegramId: tgUserId.toString(),
-          name: userInfo.value.fullName,
-          gender: userInfo.value.gender,
-          birthDate: userInfo.value.birthday,
-          weight: userInfo.value.weight,
-          height: userInfo.value.height,
-          activityLevel: userInfo.value.activity,
-          goalWeight: userInfo.value.goalWeight,
-          phone: userInfo.value.phone,
-          onlyProfile,
-        });
-
-        // Agar onlyProfile=true bo'lsa, me'yorlarni qayta hisoblamaymiz
-        if (!onlyProfile) {
-          await updateDailyNorms();
-        }
+        // API chaqiruvini amalga oshiramiz
+        await userAPI.createOrUpdate(updatedFields);
       } catch (error) {
         console.error("Ma'lumotlarni yangilash xatosi:", error);
         throw error;
       }
+    };
+
+    const getUser = async () => {
+      const {data} = await userAPI.getUser();
+      userInfo.value = data?.data;
     };
 
     // Onboarding yakunlash
@@ -104,40 +48,44 @@ export const useOnboardingStore = defineStore(
       }
     };
 
-    const setLanguage = (lang) => {
-      userInfo.value.language = lang;
-    };
-
     const setGender = (gender) => {
       userInfo.value.gender = gender;
+      updatedFields.value.gender = gender;
     };
 
     const setFullName = (name) => {
       userInfo.value.fullName = name;
+      updatedFields.value.fullName = name;
     };
 
     const setBirthday = (date) => {
       userInfo.value.birthday = date;
+      updatedFields.value.birthday = date;
     };
 
     const setWeight = (weight) => {
       userInfo.value.weight = weight;
+      updatedFields.value.weight = weight;
     };
 
     const setHeight = (height) => {
       userInfo.value.height = height;
+      updatedFields.value.height = height;
     };
 
     const setActivity = (activity) => {
       userInfo.value.activity = activity;
+      updatedFields.value.activity = activity;
     };
 
     const setGoalWeight = (weight) => {
       userInfo.value.goalWeight = weight;
+      updatedFields.value.goalWeight = weight;
     };
 
     const setPhone = (phone) => {
       userInfo.value.phone = phone;
+      updatedFields.value.phone = phone;
     };
 
     const nextStep = () => {
@@ -152,8 +100,6 @@ export const useOnboardingStore = defineStore(
       currentStep,
       isCompleted,
       userInfo,
-      dailyGoals,
-      setLanguage,
       setGender,
       setFullName,
       setBirthday,
@@ -166,8 +112,7 @@ export const useOnboardingStore = defineStore(
       prevStep,
       completeOnboarding,
       updateUserData,
-      updateDailyNorms,
-      dailyNorms,
+      getUser,
     };
   },
   {persist: true}

@@ -20,8 +20,9 @@ api.interceptors.request.use(
 );
 
 export const userAPI = {
-  createOrUpdate: (userData) => api.post("/users", userData),
-  getUser: (telegramId) => api.get(`/users/${telegramId}`),
-  calculateGoals: (telegramId) =>
-    api.post(`/users/${telegramId}/calculate-goals`),
+  createUser: (userData) => api.post("/users/create", userData),
+  updateUserField: (fieldObject) => api.put("/users/update", fieldObject),
+  getUser: () => api.get("/user/me"),
+  getDailyStats: (date) => api.get(`/daily-stats/${date}`),
+  getMeals: (date) => api.get(`/meals/${date}`),
 };

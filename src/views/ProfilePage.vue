@@ -1,12 +1,12 @@
 <script setup>
 import {useOnboardingStore} from "@/stores/onboarding";
-import {ref, computed} from "vue";
+import {ref, computed, onMounted} from "vue";
 import {useRouter} from "vue-router";
 import {useQuasar} from "quasar";
 import ActivityLevelSelector from "@/components/ActivityLevelSelector.vue";
 import BaseInput from "@/components/base/BaseInput.vue";
 import validate from "@/utils/validate";
-import {trimBetween} from "@/utils/helpers";
+import {trimBetween, formatDate} from "@/utils/helpers";
 
 const $q = useQuasar();
 const onboardingStore = useOnboardingStore();
@@ -72,7 +72,7 @@ const heightForm = ref(null);
 
 // Birthday dialog
 const showBirthdayDialog = ref(false);
-const selectedBirthday = ref(userInfo.birthday);
+const selectedBirthday = ref(formatDate(userInfo.birthDate));
 const birth_modal = ref(false);
 const birthdayForm = ref(null);
 
@@ -94,7 +94,11 @@ const loading = ref(false);
 // Edit Dialog
 const showEditDialog = ref(false);
 const editedName = ref(onboardingStore.userInfo.fullName);
-const editedPhone = ref(onboardingStore.userInfo.phone.toString().slice(-9));
+const editedPhone = ref(onboardingStore?.userInfo?.phone?.slice(-9));
+
+onMounted(async () => {
+  await onboardingStore.getUser();
+});
 
 const openActivityModal = () => {
   selectedActivity.value = userInfo.activity;
@@ -137,7 +141,7 @@ const openHeightDialog = () => {
 };
 
 const openBirthdayDialog = () => {
-  selectedBirthday.value = userInfo.birthday;
+  selectedBirthday.value = formatDate(userInfo.birthDate);
   showBirthdayDialog.value = true;
 };
 
@@ -154,7 +158,7 @@ const saveWeight = async () => {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
       onboardingStore.setWeight(selectedWeight.value);
-      await onboardingStore.updateUserData();
+      await onboardingStore.updateUserData({weight: selectedWeight.value});
       showWeightDialog.value = false;
       $q.notify({
         message: "Ma'lumotlar yangilandi",
@@ -176,7 +180,9 @@ const saveGoalWeight = async () => {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
       onboardingStore.setGoalWeight(selectedGoalWeight.value);
-      await onboardingStore.updateUserData();
+      await onboardingStore.updateUserData({
+        goalWeight: selectedGoalWeight.value,
+      });
       showGoalWeightDialog.value = false;
       $q.notify({
         message: "Ma'lumotlar yangilandi",
@@ -198,7 +204,7 @@ const saveHeight = async () => {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
       onboardingStore.setHeight(selectedHeight.value);
-      await onboardingStore.updateUserData();
+      await onboardingStore.updateUserData({height: selectedHeight.value});
       showHeightDialog.value = false;
       $q.notify({
         message: "Ma'lumotlar yangilandi",
@@ -220,7 +226,7 @@ const saveBirthday = async () => {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
       onboardingStore.setBirthday(selectedBirthday.value);
-      await onboardingStore.updateUserData();
+      await onboardingStore.updateUserData({birthday: selectedBirthday.value});
       showBirthdayDialog.value = false;
       $q.notify({
         message: "Ma'lumotlar yangilandi",
@@ -241,7 +247,7 @@ const saveGender = async () => {
   $q.loading.show(); // Loaderni ko'rsatish
   try {
     onboardingStore.setGender(selectedGender.value);
-    await onboardingStore.updateUserData();
+    await onboardingStore.updateUserData({gender: selectedGender.value});
     showGenderDialog.value = false;
     $q.notify({
       message: "Ma'lumotlar yangilandi",
@@ -257,23 +263,36 @@ const saveGender = async () => {
   }
 };
 
-const saveLanguage = () => {
+const saveLanguage = async () => {
   $q.loading.show(); // Loaderni ko'rsatish
-  // TODO: Implement language change logic
-  showLanguageDialog.value = false;
-  $q.loading.hide(); // Loaderni yashirish
-};
-
-const goToSubscriptionDetails = () => {
-  // TODO: Obuna haqida ma'lumotlar sahifasiga o'tish logikasi
-  router.push({name: "subscription-details"});
-};
-
-const saveUserData = async (field, value) => {
-  $q.loading.show();
   try {
-    onboardingStore.setUserInfo(field, value);
-    await onboardingStore.updateUserData();
+    onboardingStore.setLanguage(selectedLanguage.value);
+    await onboardingStore.updateUserData({language: selectedLanguage.value});
+    showLanguageDialog.value = false;
+    $q.notify({
+      message: "Til o'zgartirildi",
+      color: "positive",
+    });
+  } catch (error) {
+    $q.notify({
+      message: error.message || "Xatolik yuz berdi",
+      color: "negative",
+    });
+  } finally {
+    $q.loading.hide(); // Loaderni yashirish
+  }
+};
+
+const saveEditedInfo = async () => {
+  try {
+    $q.loading.show();
+    onboardingStore.setFullName(editedName.value);
+    onboardingStore.setPhone(`998${trimBetween(editedPhone.value)}`);
+    await onboardingStore.updateUserData({
+      fullName: editedName.value,
+      phone: `998${trimBetween(editedPhone.value)}`,
+    }); // Faqat o'zgargan parametrlarni jo'natish
+    showEditDialog.value = false;
     $q.notify({
       message: "Ma'lumotlar yangilandi",
       color: "positive",
@@ -288,13 +307,16 @@ const saveUserData = async (field, value) => {
   }
 };
 
-const saveEditedInfo = async () => {
+const goToSubscriptionDetails = () => {
+  // TODO: Obuna haqida ma'lumotlar sahifasiga o'tish logikasi
+  router.push({name: "subscription-details"});
+};
+
+const saveUserData = async (field, value) => {
+  $q.loading.show();
   try {
-    $q.loading.show();
-    onboardingStore.setFullName(editedName.value);
-    onboardingStore.setPhone(`998${trimBetween(editedPhone.value)}`);
-    await onboardingStore.updateUserData(true); // onlyProfile = true
-    showEditDialog.value = false;
+    onboardingStore.setUserInfo(field, value);
+    await onboardingStore.updateUserData();
     $q.notify({
       message: "Ma'lumotlar yangilandi",
       color: "positive",
@@ -388,7 +410,7 @@ const saveEditedInfo = async () => {
               </div>
               <div>
                 <div class="font-medium">
-                  {{ onboardingStore.userInfo.fullName }}
+                  {{ onboardingStore.userInfo.name }}
                 </div>
                 <div class="text-sm text-gray-500">
                   {{ onboardingStore.userInfo.phone }}
@@ -422,7 +444,7 @@ const saveEditedInfo = async () => {
                 <span>Faollik darajasi</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ activityLevels[userInfo.activity]?.title }}</span>
+                <span>{{ activityLevels[userInfo.activityLevel]?.title }}</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -486,7 +508,7 @@ const saveEditedInfo = async () => {
                 <span>Tug'ilgan kun</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ userInfo.birthday }}</span>
+                <span>{{ formatDate(userInfo.birthDate) }}</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
