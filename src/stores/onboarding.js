@@ -9,11 +9,11 @@ export const useOnboardingStore = defineStore(
     const isCompleted = ref(false);
     const userInfo = ref({
       gender: null,
-      fullName: null,
+      name: null,
       birthday: null,
       weight: null,
       height: null,
-      activity: null,
+      activityLevel: null,
       goalWeight: null,
       phone: null,
     });
@@ -24,7 +24,8 @@ export const useOnboardingStore = defineStore(
     const updateUserData = async (updatedFields) => {
       try {
         // API chaqiruvini amalga oshiramiz
-        await userAPI.createOrUpdate(updatedFields);
+        await userAPI.updateUserField(updatedFields);
+        getUser();
       } catch (error) {
         console.error("Ma'lumotlarni yangilash xatosi:", error);
         throw error;

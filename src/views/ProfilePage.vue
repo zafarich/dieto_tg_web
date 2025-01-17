@@ -51,9 +51,11 @@ const genderOptions = [
   },
 ];
 
+const userInfoComputed = computed(() => onboardingStore.userInfo);
+
 // Activity dialog
 const showActivityDialog = ref(false);
-const selectedActivity = ref(userInfo.activity);
+const selectedActivity = ref(userInfo.activityLevel);
 
 // Weight dialog
 const showWeightDialog = ref(false);
@@ -93,7 +95,7 @@ const loading = ref(false);
 
 // Edit Dialog
 const showEditDialog = ref(false);
-const editedName = ref(onboardingStore.userInfo.fullName);
+const editedName = ref(onboardingStore.userInfo.name);
 const editedPhone = ref(onboardingStore?.userInfo?.phone?.slice(-9));
 
 onMounted(async () => {
@@ -101,15 +103,16 @@ onMounted(async () => {
 });
 
 const openActivityModal = () => {
-  selectedActivity.value = userInfo.activity;
+  selectedActivity.value = userInfoComputed.value.activityLevel;
   showActivityDialog.value = true;
 };
 
 const saveActivity = async () => {
   $q.loading.show(); // Loaderni ko'rsatish
   try {
-    onboardingStore.setActivity(selectedActivity.value);
-    await onboardingStore.updateUserData();
+    await onboardingStore.updateUserData({
+      activityLevel: selectedActivity.value,
+    });
     showActivityDialog.value = false;
     $q.notify({
       message: "Ma'lumotlar yangilandi",
@@ -126,22 +129,22 @@ const saveActivity = async () => {
 };
 
 const openWeightDialog = () => {
-  selectedWeight.value = userInfo.weight;
+  selectedWeight.value = userInfoComputed?.value?.weight;
   showWeightDialog.value = true;
 };
 
 const openGoalWeightDialog = () => {
-  selectedGoalWeight.value = userInfo.goalWeight;
+  selectedGoalWeight.value = userInfoComputed?.value?.goalWeight;
   showGoalWeightDialog.value = true;
 };
 
 const openHeightDialog = () => {
-  selectedHeight.value = userInfo.height;
+  selectedHeight.value = userInfoComputed.value?.height;
   showHeightDialog.value = true;
 };
 
 const openBirthdayDialog = () => {
-  selectedBirthday.value = formatDate(userInfo.birthDate);
+  selectedBirthday.value = formatDate(userInfoComputed?.value.birthDate);
   showBirthdayDialog.value = true;
 };
 
@@ -157,7 +160,6 @@ const saveWeight = async () => {
   if (weightForm.value?.validate()) {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
-      onboardingStore.setWeight(selectedWeight.value);
       await onboardingStore.updateUserData({weight: selectedWeight.value});
       showWeightDialog.value = false;
       $q.notify({
@@ -179,7 +181,6 @@ const saveGoalWeight = async () => {
   if (goalWeightForm.value?.validate()) {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
-      onboardingStore.setGoalWeight(selectedGoalWeight.value);
       await onboardingStore.updateUserData({
         goalWeight: selectedGoalWeight.value,
       });
@@ -203,7 +204,6 @@ const saveHeight = async () => {
   if (heightForm.value?.validate()) {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
-      onboardingStore.setHeight(selectedHeight.value);
       await onboardingStore.updateUserData({height: selectedHeight.value});
       showHeightDialog.value = false;
       $q.notify({
@@ -225,8 +225,7 @@ const saveBirthday = async () => {
   if (birthdayForm.value?.validate()) {
     $q.loading.show(); // Loaderni ko'rsatish
     try {
-      onboardingStore.setBirthday(selectedBirthday.value);
-      await onboardingStore.updateUserData({birthday: selectedBirthday.value});
+      await onboardingStore.updateUserData({birthDate: selectedBirthday.value});
       showBirthdayDialog.value = false;
       $q.notify({
         message: "Ma'lumotlar yangilandi",
@@ -246,7 +245,6 @@ const saveBirthday = async () => {
 const saveGender = async () => {
   $q.loading.show(); // Loaderni ko'rsatish
   try {
-    onboardingStore.setGender(selectedGender.value);
     await onboardingStore.updateUserData({gender: selectedGender.value});
     showGenderDialog.value = false;
     $q.notify({
@@ -286,10 +284,8 @@ const saveLanguage = async () => {
 const saveEditedInfo = async () => {
   try {
     $q.loading.show();
-    onboardingStore.setFullName(editedName.value);
-    onboardingStore.setPhone(`998${trimBetween(editedPhone.value)}`);
     await onboardingStore.updateUserData({
-      fullName: editedName.value,
+      name: editedName.value,
       phone: `998${trimBetween(editedPhone.value)}`,
     }); // Faqat o'zgargan parametrlarni jo'natish
     showEditDialog.value = false;
@@ -444,7 +440,9 @@ const saveUserData = async (field, value) => {
                 <span>Faollik darajasi</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ activityLevels[userInfo.activityLevel]?.title }}</span>
+                <span>{{
+                  activityLevels[userInfoComputed.activityLevel]?.title
+                }}</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -463,7 +461,7 @@ const saveUserData = async (field, value) => {
                 <span>Joriy vazn</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ userInfo.weight }} kg</span>
+                <span>{{ userInfoComputed.weight }} kg</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -478,7 +476,7 @@ const saveUserData = async (field, value) => {
                 <span>Maqsad vazn</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ userInfo.goalWeight }} kg</span>
+                <span>{{ userInfoComputed.goalWeight }} kg</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -493,7 +491,7 @@ const saveUserData = async (field, value) => {
                 <span>Bo'y</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ userInfo.height }} sm</span>
+                <span>{{ userInfoComputed.height }} sm</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -508,7 +506,7 @@ const saveUserData = async (field, value) => {
                 <span>Tug'ilgan kun</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ formatDate(userInfo.birthDate) }}</span>
+                <span>{{ formatDate(userInfoComputed.birthDate) }}</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -523,7 +521,9 @@ const saveUserData = async (field, value) => {
                 <span>Jins</span>
               </div>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>{{ userInfo.gender === "male" ? "Erkak" : "Ayol" }}</span>
+                <span>{{
+                  userInfoComputed.gender === "male" ? "Erkak" : "Ayol"
+                }}</span>
                 <q-icon name="chevron_right" size="20px" />
               </div>
             </div>
@@ -586,7 +586,7 @@ const saveUserData = async (field, value) => {
             v-for="(level, key) in activityLevels"
             :key="key"
             class="activity-option"
-            :class="{selected: selectedActivity === key}"
+            :class="{selected: selectedActivity == key}"
             @click="selectedActivity = key"
           >
             <div class="flex items-center gap-3">
