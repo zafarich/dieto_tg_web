@@ -173,7 +173,7 @@ function goBack() {
               <div class="result-content">
                 <div class="label">{{ $t("Goal_Weight") }}</div>
                 <div class="value">
-                  {{ store.userInfo.goal_weight }} {{ $t("kg") }}
+                  {{ store.userInfo.goalWeight }} {{ $t("kg") }}
                 </div>
               </div>
             </div>

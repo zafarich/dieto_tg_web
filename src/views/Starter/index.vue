@@ -18,29 +18,27 @@ const store = useOnboardingStore();
 const currentComponent = computed(() => {
   switch (store.currentStep) {
     case 1:
-      return LanguageStep;
-    case 2:
       return GenderStep;
-    case 3:
+    case 2:
       return GenderInfoStep;
-    case 4:
+    case 3:
       return PhoneStep;
-    case 5:
+    case 4:
       return InfoStep;
-    case 6:
+    case 5:
       return BirthdayStep;
-    case 7:
+    case 6:
       return WeightStep;
-    case 8:
+    case 7:
       return HeightStep;
-    case 9:
+    case 8:
       return ActivityStep;
-    case 10:
+    case 9:
       return GoalWeightStep;
-    case 11:
+    case 10:
       return ResultsStep;
     default:
-      return LanguageStep;
+      return GenderStep;
   }
 });
 </script>

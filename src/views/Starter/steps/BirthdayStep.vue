@@ -13,8 +13,8 @@ const birth_modal = ref(false);
 const formRef = ref(null);
 
 onMounted(() => {
-  if (store.userInfo.birthday) {
-    birthday.value = store.userInfo.birthday;
+  if (store.userInfo.birthDate) {
+    birthday.value = store.userInfo.birthDate;
   }
 });
 async function submit() {

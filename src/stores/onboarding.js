@@ -10,7 +10,7 @@ export const useOnboardingStore = defineStore(
     const userInfo = ref({
       gender: null,
       name: null,
-      birthday: null,
+      birthDate: null,
       weight: null,
       height: null,
       activityLevel: null,
@@ -37,10 +37,16 @@ export const useOnboardingStore = defineStore(
       userInfo.value = data?.data;
     };
 
+    const createUser = async () => {
+      const {data} = await userAPI.createUser(userInfo.value);
+      userInfo.value = data?.data;
+    };
+
     // Onboarding yakunlash
     const completeOnboarding = async () => {
       try {
-        await updateUserData();
+        await createUser();
+        await getUser();
         isCompleted.value = true;
         localStorage.setItem("onboardingCompleted", "true");
       } catch (error) {
@@ -54,14 +60,14 @@ export const useOnboardingStore = defineStore(
       updatedFields.value.gender = gender;
     };
 
-    const setFullName = (name) => {
-      userInfo.value.fullName = name;
-      updatedFields.value.fullName = name;
+    const setname = (name) => {
+      userInfo.value.name = name;
+      updatedFields.value.name = name;
     };
 
     const setBirthday = (date) => {
-      userInfo.value.birthday = date;
-      updatedFields.value.birthday = date;
+      userInfo.value.birthDate = date;
+      updatedFields.value.birthDate = date;
     };
 
     const setWeight = (weight) => {
@@ -75,8 +81,8 @@ export const useOnboardingStore = defineStore(
     };
 
     const setActivity = (activity) => {
-      userInfo.value.activity = activity;
-      updatedFields.value.activity = activity;
+      userInfo.value.activityLevel = activity;
+      updatedFields.value.activityLevel = activity;
     };
 
     const setGoalWeight = (weight) => {
@@ -102,7 +108,7 @@ export const useOnboardingStore = defineStore(
       isCompleted,
       userInfo,
       setGender,
-      setFullName,
+      setname,
       setBirthday,
       setWeight,
       setHeight,

@@ -36,6 +36,6 @@ const goBack = () => {
         outline
       />
     </div>
-    <q-btn class="q-mt-4" flat no-caps :label="$t('Back')" @click="goBack" />
+    <!-- <q-btn class="q-mt-4" flat no-caps :label="$t('Back')" @click="goBack" /> -->
   </div>
 </template>

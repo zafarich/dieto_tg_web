@@ -5,7 +5,7 @@ import validate from "@/utils/validate";
 import BaseInput from "@/components/base/BaseInput.vue";
 
 const store = useOnboardingStore();
-const fullName = ref("");
+const name = ref("");
 
 const formRef = ref(null);
 
@@ -14,13 +14,13 @@ async function submit() {
   const hasError = !(await formRef.value.validate());
   if (hasError) return resetValidation(3000);
 
-  store.setFullName(fullName.value);
+  store.setname(name.value);
   store.nextStep();
 }
 
 onMounted(() => {
-  if (store.userInfo.fullName) {
-    fullName.value = store.userInfo.fullName;
+  if (store.userInfo.name) {
+    name.value = store.userInfo.name;
   }
 });
 
@@ -45,7 +45,7 @@ function resetValidation(timeout = 0) {
 
     <q-form ref="formRef" autofocus>
       <BaseInput
-        v-model="fullName"
+        v-model="name"
         :label="$t('Name')"
         class="mb-4 full-width"
         :rules="[(v) => validate.required(v), (v) => validate.min_string(v, 2)]"
