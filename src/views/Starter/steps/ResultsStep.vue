@@ -38,7 +38,7 @@ const activityText = computed(() => {
     high: t("title_high"),
     very_high: t("title_very_high"),
   };
-  return activityMap[store.userInfo.activity] || "";
+  return activityMap[store.userInfo.activityLevel] || "";
 });
 
 const bmiRanges = [

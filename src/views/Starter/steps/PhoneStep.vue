@@ -56,7 +56,7 @@ const phoneInput = ref(null);
 const formRef = ref(null);
 
 onMounted(() => {
-  phone.value = store.userInfo.phone || "";
+  phone.value = store.userInfo.phone?.replace(/^998/, "") || "";
   resetValidation();
 });
 
